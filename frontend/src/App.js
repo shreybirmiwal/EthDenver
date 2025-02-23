@@ -11,6 +11,16 @@ function App() {
   const [query_found_cam, set_query_found_cam] = useState();
   const [query_found_res, set_query_found_res] = useState();
 
+  useEffect(() => {
+    if (state === 'loading') {
+      const timer = setTimeout(() => {
+        console.log("Delayed action executed");
+        setState('map');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [state]);
+
 
   const handleQueryChange = (event) => {
     setQuery(event.target.value);
@@ -49,6 +59,7 @@ function App() {
     }
 
     set_done_query(true);
+    setState('loading')
     console.log("COMPLETLY DONE DATA BELOW " + query_found_cam + "  " + query_found_res)
 
     console.log(data);
@@ -76,6 +87,7 @@ function App() {
     }
 
     set_done_query(true);
+    setState('loading')
     console.log("COMPLETLY DONE DATA BELOW " + query_found_cam + "  " + query_found_res)
 
 
@@ -149,6 +161,14 @@ function App() {
         <h1>Home</h1>
         <input value={query} onChange={handleQueryChange} />
         <button onClick={handleSubmit}>Submit</button>
+      </div>
+    );
+  }
+
+  if (state === 'loading') {
+    return (
+      <div>
+        <h1>Loading...</h1>
       </div>
     );
   }
