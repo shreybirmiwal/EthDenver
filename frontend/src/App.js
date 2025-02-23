@@ -8,10 +8,15 @@ function App() {
   const handleQueryChange = (event) => {
     setQuery(event.target.value);
   };
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    console.log('Query:', query);
 
+
+  const handleSubmit = async (event) => {
+
+    if (query === '') {
+      return;
+    }
+
+    console.log('Query:', query);
 
     const response = await fetch('/api/query_determine', {
       method: 'POST',
@@ -20,10 +25,49 @@ function App() {
     });
 
     const data = await response.json();
+
+    const location = data.location;
+    const face_search = data.face_search;
+
+    if (location == -1) {
+      console.log("Location not found");
+      //now we need to search by description
+      searchByDescription(query, face_search);
+    }
+    else {
+      searchByLocation(location, face_search);
+      console.log("cam location found at: ID ", location);
+    }
+
     console.log(data);
 
   };
 
+  const searchByDescription = async (query, face_search) => {
+    console.log('Query:', query);
+
+    const response = await fetch('/api/search_cameras_description', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: query })
+    });
+
+    const data = await response.json();
+    console.log("WE NEED FACE SEARCH?" + face_search + "FULL DATA:", data)
+  }
+
+  const searchByLocation = async (location, face_search) => {
+    console.log('Location:', location);
+
+    const response = await fetch('/api/search_cameras_location', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid: location })
+    });
+
+    const data = await response.json();
+    console.log("WE NEED FACE SEARCH?" + face_search + "FULL DATA:", data)
+  }
 
   if (state === 'home') {
     return (
