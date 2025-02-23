@@ -230,8 +230,37 @@ def answer_query_no_face():
 
     except Exception as e:
         return f"Error analyzing image: {str(e)}"
+    
 
 
+@app.route('/api/add_camera', methods=['POST'])
+def add_camera():
+    try:
+        data = request.json
+        required_fields = ["uid", "location", "image_url", "description"]
+        if any(field not in data for field in required_fields):
+            return jsonify({'error': 'Missing fields in request'}), 400
+
+
+        image_frame_description = getImage_Description(data['image_url'])
+
+        # Vector embed the description.
+        embedding = embed_text(data['description'] + image_frame_description)
+
+        # Add camera stream to the Chroma collection.
+        camera_collection.add(
+            documents=[data['description']],
+            metadatas=[{
+                "location": data['location'],
+                "image_url": data['image_url'],
+                "description": data['description'] + image_frame_description
+            }],
+            ids=[data['uid']],
+            embeddings=[embedding]
+        )
+        return jsonify({'message': 'Camera added successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
     
 if __name__ == '__main__':
