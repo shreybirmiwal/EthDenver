@@ -3,6 +3,8 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import chromadb
 from chromadb.config import Settings
+import requests
+import base64
 
 load_dotenv()
 app = Flask(__name__)
@@ -16,6 +18,57 @@ else:
     camera_collection = chroma_client.get_collection("camera_streams")
 
 
+
+def getImage_Description(image_url):
+    try:
+        # Step 1: Download the image
+        response = requests.get(image_url, stream=True)
+
+        if response.status_code != 200:
+            return f"Failed to download image, status code: {response.status_code}"
+
+        # Step 2: Convert image to base64
+        img_data = response.content
+        img_base64 = base64.b64encode(img_data).decode("utf-8")
+
+        # Step 3: Send image to OpenAI API for analysis
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Describe what you see in this image in detail"},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_base64}"}}
+                    ]
+                }
+            ],
+            max_tokens=300
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return f"Error analyzing image: {str(e)}"
+    
+    
+    # Read image bytes
+    image_bytes = response.content
+    
+    # Call GPT-4 Vision API
+    response = client.images.generate(
+        model="gpt-4-vision-preview",
+        messages=[
+            {"role": "user", "content": [
+                {"type": "text", "text": "Describe this image in detail."},
+                {"type": "image_url", "image_url": {"url": image_url}}
+            ]}
+        ],
+        max_tokens=200
+    )
+    
+    return response["choices"][0]["message"]["content"]
+    
 
 def GPT_Call(query):
     """
@@ -127,6 +180,33 @@ def search_camera_location():
         # Handle any exceptions and return an error message
         return jsonify({'error': str(e)}), 500
 
+
+# 2. Endpoint that returns all camera objects.
+@app.route('/api/get_all_cameras', methods=['GET'])
+def get_cameras():
+    try:
+        result = camera_collection.get(include=["metadatas", "documents"])
+        cameras = []
+        ids = result.get("ids", [])
+        metadatas = result.get("metadatas", [])
+        for cam_id, metadata in zip(ids, metadatas):
+            cameras.append({"uid": cam_id, **metadata})
+        return jsonify(cameras), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/clear_db', methods=['GET'])
+def clear_db():
+
+    result = camera_collection.get(include=["metadatas", "documents"])
+    cameras = []
+    ids = result.get("ids", [])
+
+    camera_collection.delete(
+    ids=ids,
+    )
+
+    return jsonify({'message': 'Database cleared'}), 200
     
 if __name__ == '__main__':
     app.run(debug=True)

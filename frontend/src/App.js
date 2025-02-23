@@ -54,6 +54,12 @@ function App() {
 
     const data = await response.json();
     console.log("WE NEED FACE SEARCH?" + face_search + "FULL DATA:", data)
+    if (face_search) {
+      face_search_frontend(data);
+    }
+    else {
+      answer_query_no_face_search(data);
+    }
   }
 
   const searchByLocation = async (location, face_search) => {
@@ -67,7 +73,27 @@ function App() {
 
     const data = await response.json();
     console.log("WE NEED FACE SEARCH?" + face_search + "FULL DATA:", data)
+    if (face_search) {
+      face_search_frontend(data);
+    }
+    else {
+      answer_query_no_face_search(data);
+    }
   }
+
+  const face_search_frontend = async (cam) => {
+    //replace with logic that queries agent and then gets camera image and then gets face
+    return {
+      "name": "John Doe",
+      "age": "25",
+      "facebook": "https://www.facebook.com",
+      "linkedin": "https://www.linkedin.com",
+    }
+  }
+  const answer_query_no_face_search = async (cam) => {
+
+  }
+
 
   if (state === 'home') {
     return (
