@@ -79,7 +79,7 @@ def query_determine():
     
 
 @app.route('/api/search_cameras_description', methods=['POST'])
-def search_cameras():
+def search_camera_description():
     try:
         data = request.json
         if not data or "query" not in data:
@@ -96,6 +96,37 @@ def search_cameras():
         #we do it this way just to return first result
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/search_cameras_location', methods=['POST'])
+def search_camera_location():
+    try:
+        # Parse the incoming JSON data
+        data = request.json
+        if not data or "uid" not in data:
+            return jsonify({'error': 'No UID provided'}), 400
+
+        # Extract the UID from the request
+        camera_uid = data['uid']
+
+        # Query the collection using the UID
+        result = camera_collection.get(ids=[camera_uid])
+
+        # Check if any result is found
+        if not result.get("ids", []) or len(result["ids"]) == 0:
+            return jsonify({'error': 'Camera not found'}), 404
+
+        # Extract metadata for the first result
+        cam_id = result["ids"][0]
+        metadata = result["metadatas"][0]
+
+        # Return the UID and metadata in JSON format
+        return jsonify({"uid": cam_id, **metadata}), 200
+
+    except Exception as e:
+        # Handle any exceptions and return an error message
+        return jsonify({'error': str(e)}), 500
+
     
 if __name__ == '__main__':
     app.run(debug=True)
