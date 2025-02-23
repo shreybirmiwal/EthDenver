@@ -5,6 +5,13 @@ function App() {
 
   //Home page
   const [query, setQuery] = useState('');
+  const [done_query, set_done_query] = useState(false);
+
+  //Map page
+  const [query_found_cam, set_query_found_cam] = useState();
+  const [query_found_res, set_query_found_res] = useState();
+
+
   const handleQueryChange = (event) => {
     setQuery(event.target.value);
   };
@@ -32,12 +39,17 @@ function App() {
     if (location == -1) {
       console.log("Location not found");
       //now we need to search by description
-      searchByDescription(query, face_search);
+      cam = searchByDescription(query, face_search);
+      set_query_found_cam(cam);
     }
     else {
-      searchByLocation(location, face_search);
-      console.log("cam location found at: ID ", location);
+      cam = searchByLocation(location, face_search);
+      set_query_found_cam(cam);
+      console.log("cam location found at: ID ", cam);
     }
+
+    set_done_query(true);
+    console.log("COMPLETLY DONE DATA BELOW " + query_found_cam + "  " + query_found_res)
 
     console.log(data);
 
@@ -55,11 +67,15 @@ function App() {
     const data = await response.json();
     console.log("WE NEED FACE SEARCH?" + face_search + "FULL DATA:", data)
     if (face_search) {
-      face_search_frontend(data);
+      var res = face_search_frontend(data);
+      set_query_found_res(res);
     }
     else {
-      answer_query_no_face_search(data, query);
+      var res = answer_query_no_face_search(data, query);
+      set_query_found_res(res);
     }
+
+    return data;
   }
 
   const searchByLocation = async (location, face_search) => {
@@ -74,11 +90,15 @@ function App() {
     const data = await response.json();
     console.log("WE NEED FACE SEARCH?" + face_search + "FULL DATA:", data)
     if (face_search) {
-      face_search_frontend(data);
+      var res = face_search_frontend(data);
+      set_query_found_res(res);
     }
     else {
-      answer_query_no_face_search(data, query);
+      var res = answer_query_no_face_search(data, query);
+      set_query_found_res(res);
     }
+
+    return data
   }
 
   const face_search_frontend = async (cam) => {
