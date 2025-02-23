@@ -5,7 +5,6 @@ function App() {
 
   //Home page
   const [query, setQuery] = useState('');
-  const [done_query, set_done_query] = useState(false);
 
   //Map page
   const [query_found_cam, set_query_found_cam] = useState();
@@ -58,7 +57,6 @@ function App() {
       console.log("cam location found at: ID ", cam);
     }
 
-    set_done_query(true);
     setState('loading')
     console.log("COMPLETLY DONE DATA BELOW " + query_found_cam + "  " + query_found_res)
 
@@ -86,7 +84,6 @@ function App() {
       set_query_found_res(res);
     }
 
-    set_done_query(true);
     setState('loading')
     console.log("COMPLETLY DONE DATA BELOW " + query_found_cam + "  " + query_found_res)
 
@@ -158,7 +155,6 @@ function App() {
   if (state === 'home') {
     return (
       <div>
-        <h1>Home</h1>
         <input value={query} onChange={handleQueryChange} />
         <button onClick={handleSubmit}>Submit</button>
       </div>
