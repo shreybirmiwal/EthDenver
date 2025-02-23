@@ -51,24 +51,6 @@ def getImage_Description(image_url):
     except Exception as e:
         return f"Error analyzing image: {str(e)}"
     
-    
-    # Read image bytes
-    image_bytes = response.content
-    
-    # Call GPT-4 Vision API
-    response = client.images.generate(
-        model="gpt-4-vision-preview",
-        messages=[
-            {"role": "user", "content": [
-                {"type": "text", "text": "Describe this image in detail."},
-                {"type": "image_url", "image_url": {"url": image_url}}
-            ]}
-        ],
-        max_tokens=200
-    )
-    
-    return response["choices"][0]["message"]["content"]
-    
 
 def GPT_Call(query):
     """
@@ -207,6 +189,50 @@ def clear_db():
     )
 
     return jsonify({'message': 'Database cleared'}), 200
+
+
+@app.route('/api/answer_query_no_face', methods=['GET'])
+def answer_query_no_face():
+
+    try:
+        data = request.json
+        cam_data = data.cam
+        prompt = data.prompt
+
+        image_url = cam_data['image_url']
+
+        # Step 1: Download the image
+        response = requests.get(image_url, stream=True)
+
+        if response.status_code != 200:
+            return f"Failed to download image, status code: {response.status_code}"
+
+        # Step 2: Convert image to base64
+        img_data = response.content
+        img_base64 = base64.b64encode(img_data).decode("utf-8")
+
+        # Step 3: Send image to OpenAI API for analysis
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": f"You have an image that will help answer the prompt. The user prompt: {prompt} and the image is shown below. Please provide a response to the user prompt using the image."},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_base64}"}}
+                    ]
+                }
+            ],
+            max_tokens=300
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return f"Error analyzing image: {str(e)}"
+
+
+
     
 if __name__ == '__main__':
     app.run(debug=True)

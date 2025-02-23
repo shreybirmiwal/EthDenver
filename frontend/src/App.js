@@ -58,7 +58,7 @@ function App() {
       face_search_frontend(data);
     }
     else {
-      answer_query_no_face_search(data);
+      answer_query_no_face_search(data, query);
     }
   }
 
@@ -77,7 +77,7 @@ function App() {
       face_search_frontend(data);
     }
     else {
-      answer_query_no_face_search(data);
+      answer_query_no_face_search(data, query);
     }
   }
 
@@ -90,8 +90,19 @@ function App() {
       "linkedin": "https://www.linkedin.com",
     }
   }
-  const answer_query_no_face_search = async (cam) => {
+  const answer_query_no_face_search = async (cam, prompt) => {
+    //given cam, get the cam image, take the image, put it into GPT and answer the query
+    //get image url
 
+
+    const response = await fetch('/api/answer_query_no_face', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cam: cam, prompt: query })
+    });
+
+    const data = await response.json();
+    return data;
   }
 
 
