@@ -39,11 +39,11 @@ function App() {
     if (location == -1) {
       console.log("Location not found");
       //now we need to search by description
-      cam = searchByDescription(query, face_search);
+      var cam = searchByDescription(query, face_search);
       set_query_found_cam(cam);
     }
     else {
-      cam = searchByLocation(location, face_search);
+      var cam = searchByLocation(location, face_search, query);
       set_query_found_cam(cam);
       console.log("cam location found at: ID ", cam);
     }
@@ -75,16 +75,20 @@ function App() {
       set_query_found_res(res);
     }
 
+    set_done_query(true);
+    console.log("COMPLETLY DONE DATA BELOW " + query_found_cam + "  " + query_found_res)
+
+
     return data;
   }
 
-  const searchByLocation = async (location, face_search) => {
+  const searchByLocation = async (location, face_search, query) => {
     console.log('Location:', location);
 
     const response = await fetch('/api/search_cameras_location', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uid: location })
+      body: JSON.stringify({ uid: String(location) })
     });
 
     const data = await response.json();
@@ -109,21 +113,33 @@ function App() {
       "facebook": "https://www.facebook.com",
       "linkedin": "https://www.linkedin.com",
     }
+
   }
   const answer_query_no_face_search = async (cam, prompt) => {
-    //given cam, get the cam image, take the image, put it into GPT and answer the query
-    //get image url
+    console.log("STARTING ANSWER QUERY NO FACE SEARCH");
+    console.log("CAM DATA:", cam);
+    console.log("PROMPT:", prompt);
 
+    if (!cam || !prompt) {
+      console.error("ERROR: cam or prompt is undefined");
+      return { error: "Invalid input data" };
+    }
 
-    const response = await fetch('/api/answer_query_no_face', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cam: cam, prompt: query })
-    });
+    try {
+      const response = await fetch('/api/answer_query_no_face', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cam: cam, prompt: prompt })
+      });
 
-    const data = await response.json();
-    return data;
-  }
+      const data = await response.json();
+      console.log("RESPONSE DATA:", data);
+      return data;
+    } catch (error) {
+      console.error("Fetch error:", error);
+      return { error: "Request failed" };
+    }
+  };
 
 
   if (state === 'home') {

@@ -104,7 +104,7 @@ def query_determine():
         if not data or 'prompt' not in data:
             return jsonify({'error': 'No prompt provided'}), 400
             
-        query = "Return in valid JSON only. First, examine the following user query and determine if it states/matches any of the following locations: {0:Denver, 1:Austin, 2:NYC}. If it is, please return the index of the place in the json response in ‘location’ if no location exists, return -1. Finally, check if this requires a 'face-search' , return True of False. This query should be checking if the user is asking to get details on a face or not. Here is an example query “Find me the person who is on stage in ethDenver now” —> return JSON: {“location”:0, “face-search”:true} explanation: we need 0th location(denver) and we need face search to get the person. here is another example:  “Find me the person in orange jumpsuit escaping prison” —> return JSON: {“location”:-1, “face-search”:true}. Explanation: we cant search by location bc we dont know and it doesnt match the location searches,. we need face-search to get the face details. “Find the stolen red car” —> return JSON: {“location”:-1, “face-search”:false}. Explanation: we cant search by location bc we dont know and it doesnt match the location searches,. we cant use face-search because we arent searching for a specific face. thanks! USER QUERY:" + data['prompt'] 
+        query = "Return in valid JSON only. First, examine the following user query and determine if it states/matches any of the following locations: {0:Denver, 1:Austin, 2:NYC}. If it is, please return the index of the place in the json response in ‘location’ if no location exists, return -1. Finally, check if this requires a 'face_search' , return True of False. This query should be checking if the user is asking to get details on a face or not. Here is an example query “Find me the person who is on stage in ethDenver now” —> return JSON: {“location”:0, “face_search”:true} explanation: we need 0th location(denver) and we need face search to get the person. here is another example:  “Find me the person in orange jumpsuit escaping prison” —> return JSON: {“location”:-1, “face_search”:true}. Explanation: we cant search by location bc we dont know and it doesnt match the location searches,. we need face_search to get the face details. “Find the stolen red car” —> return JSON: {“location”:-1, “face_search”:false}. Explanation: we cant search by location bc we dont know and it doesnt match the location searches,. we cant use face_search because we arent searching for a specific face. thanks! USER QUERY:" + data['prompt'] 
         
         ret = GPT_Call(query)
         return jsonify(ret)
@@ -126,7 +126,7 @@ def search_camera_description():
             n_results=1
         )
         for cam_id, metadata in zip(result.get("ids", [])[0], result.get("metadatas", [])[0]):
-            return jsonify({"uid": cam_id, **metadata}, 200)
+            return jsonify({"uid": cam_id, **metadata})
         
         #we do it this way just to return first result
     except Exception as e:
@@ -173,7 +173,7 @@ def get_cameras():
         metadatas = result.get("metadatas", [])
         for cam_id, metadata in zip(ids, metadatas):
             cameras.append({"uid": cam_id, **metadata})
-        return jsonify(cameras), 200
+        return jsonify(cameras)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -191,13 +191,17 @@ def clear_db():
     return jsonify({'message': 'Database cleared'}), 200
 
 
-@app.route('/api/answer_query_no_face', methods=['GET'])
+@app.route('/api/answer_query_no_face', methods=['POST'])
 def answer_query_no_face():
+    print("STARTED ANSWER QUERY NO FACE")
 
     try:
         data = request.json
-        cam_data = data.cam
-        prompt = data.prompt
+        cam_data = data['cam']
+        prompt = data['prompt']
+
+        print("GOT CAM DATA", cam_data)
+        print("GOT PROMPT", prompt)
 
         image_url = cam_data['image_url']
 
@@ -205,6 +209,7 @@ def answer_query_no_face():
         response = requests.get(image_url, stream=True)
 
         if response.status_code != 200:
+            print(f"Failed to download image, status code: {response.status_code}")
             return f"Failed to download image, status code: {response.status_code}"
 
         # Step 2: Convert image to base64
@@ -229,6 +234,7 @@ def answer_query_no_face():
         return response.choices[0].message.content
 
     except Exception as e:
+        print(f"Error analyzing image: {str(e)}")
         return f"Error analyzing image: {str(e)}"
     
 
