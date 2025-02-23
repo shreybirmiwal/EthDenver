@@ -1,10 +1,21 @@
 from flask import Flask, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
-load_dotenv()
+import chromadb
+from chromadb.config import Settings
 
+load_dotenv()
 app = Flask(__name__)
 client = OpenAI()
+
+chroma_client = chromadb.PersistentClient()
+collection_names = chroma_client.list_collections()
+if "camera_streams" not in collection_names:
+    camera_collection = chroma_client.create_collection("camera_streams")
+else:
+    camera_collection = chroma_client.get_collection("camera_streams")
+
+
 
 def GPT_Call(query):
     """
@@ -39,6 +50,13 @@ def GPT_Call(query):
     except Exception as e:
         # If there is an error making the call to the GPT model, return an error
         return {"error": str(e)}
+    
+def embed_text(text):
+    response = client.embeddings.create(
+        model="text-embedding-ada-002",
+        input=text
+    )
+    return response.data[0].embedding
 
 @app.route('/api/hello-world')
 def hello_world():
@@ -56,6 +74,26 @@ def query_determine():
         ret = GPT_Call(query)
         return jsonify(ret)
     
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/search_cameras_description', methods=['POST'])
+def search_cameras():
+    try:
+        data = request.json
+        if not data or "query" not in data:
+            return jsonify({'error': 'No query provided'}), 400
+
+        query_embedding = embed_text(data['query'])
+        result = camera_collection.query(
+            query_embeddings=[query_embedding],
+            n_results=1
+        )
+        for cam_id, metadata in zip(result.get("ids", [])[0], result.get("metadatas", [])[0]):
+            return jsonify({"uid": cam_id, **metadata}, 200)
+        
+        #we do it this way just to return first result
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
