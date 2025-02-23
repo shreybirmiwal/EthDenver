@@ -196,28 +196,42 @@ def answer_query_no_face():
     print("STARTED ANSWER QUERY NO FACE")
 
     try:
-        data = request.json
-        cam_data = data['cam']
-        prompt = data['prompt']
+        data = request.get_json()
+        if not data:
+            print("ERROR: No JSON data received")
+            return jsonify({"error": "No JSON data received"}), 400
+
+        print("RECEIVED DATA:", data)  # Debugging log
+
+        cam_data = data.get('cam')
+        prompt = data.get('prompt')
+
+        if not cam_data or not prompt:
+            print("ERROR: Missing 'cam' or 'prompt' in request")
+            return jsonify({"error": "Missing 'cam' or 'prompt'"}), 400
 
         print("GOT CAM DATA", cam_data)
         print("GOT PROMPT", prompt)
 
-        image_url = cam_data['image_url']
+        image_url = cam_data.get('image_url')
+
+        if not image_url:
+            print("ERROR: No image URL provided")
+            return jsonify({"error": "No image URL provided"}), 400
 
         # Step 1: Download the image
         response = requests.get(image_url, stream=True)
 
         if response.status_code != 200:
             print(f"Failed to download image, status code: {response.status_code}")
-            return f"Failed to download image, status code: {response.status_code}"
+            return jsonify({"error": f"Failed to download image, status code: {response.status_code}"}), 500
 
         # Step 2: Convert image to base64
         img_data = response.content
         img_base64 = base64.b64encode(img_data).decode("utf-8")
 
         # Step 3: Send image to OpenAI API for analysis
-        response = client.chat.completions.create(
+        openai_response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {
@@ -231,11 +245,11 @@ def answer_query_no_face():
             max_tokens=300
         )
 
-        return response.choices[0].message.content
+        return jsonify({"response": openai_response.choices[0].message.content})
 
     except Exception as e:
         print(f"Error analyzing image: {str(e)}")
-        return f"Error analyzing image: {str(e)}"
+        return jsonify({"error": f"Error analyzing image: {str(e)}"}), 500
     
 
 
