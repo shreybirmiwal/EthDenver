@@ -346,7 +346,7 @@ function App() {
                 MAINFRAME ACCESS GRANTED
               </div>
 
-              <div className="flex items-center">
+              <div className="flex items-center text-3xl">
                 <span className="mr-2">{'>'}</span>
                 {!query && <span className="animate-blink">▌</span>}
                 <input
@@ -354,7 +354,7 @@ function App() {
                   value={query}
                   onChange={handleQueryChange}
                   onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-                  className="w-96 bg-transparent border-none focus:outline-none text-green-500 caret-green-500 placeholder-gray-500"
+                  className="w-full bg-transparent border-none focus:outline-none text-green-500 caret-green-500 placeholder-gray-500"
                   placeholder="ENTER SEARCH PARAMETERS..."
                 />
               </div>

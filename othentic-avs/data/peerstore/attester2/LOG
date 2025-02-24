@@ -1,1 +1,5 @@
-2025/02/24-19:39:15.742337 ffff85e0f060 Delete type=3 #1
+2025/02/24-21:25:24.664347 ffff6be0f060 Recovering log #3
+2025/02/24-21:25:24.666041 ffff6be0f060 Level-0 table #5: started
+2025/02/24-21:25:24.670163 ffff6be0f060 Level-0 table #5: 16155 bytes OK
+2025/02/24-21:25:24.675223 ffff6be0f060 Delete type=0 #3
+2025/02/24-21:25:24.676007 ffff6be0f060 Delete type=3 #2
