@@ -8,6 +8,14 @@ function App() {
   const [query, setQuery] = useState('');
   const options = ["my lost dog", "the prison escapee", "my stolen car"];
   const [index, setIndex] = useState(0);
+
+  //add new camera
+  const [showPopup, setShowPopup] = useState(false);
+  const [newCamCoords, setNewCamCoords] = useState("");
+  const [newCamUrl, setNewCamUrl] = useState("");
+  const [newCamDesc, setNewCamDesc] = useState("");
+  //END add new camera
+
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % options.length);
@@ -160,11 +168,34 @@ function App() {
     }
   };
 
+  const addNewCamera = async () => {
+    const newCamUid = Math.floor(Math.random() * 1000000);
+
+    await fetch("/api/add_camera", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        uid: newCamUid,
+        coords: newCamCoords,
+        url: newCamUrl,
+        desc: newCamDesc,
+      }),
+    });
+    setShowPopup(false);
+  };
 
   if (state === 'home' || state === 'loading') {
     return (
       <>
-        <div className="flex items-center justify-center h-screen bg-black text-white">
+        <div className="flex items-center justify-center h-screen bg-black text-white relative">
+          {/* Add Camera Button */}
+          <button
+            onClick={() => setShowPopup(true)}
+            className="absolute top-5 right-5 px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg text-black font-semibold"
+          >
+            + Add Camera
+          </button>
+
           {/* Original Homepage Content */}
           <div className="text-center">
             <h1 className="text-4xl font-light">
@@ -186,48 +217,52 @@ function App() {
           </div>
         </div>
 
-        {/* Loading Overlay */}
-        {state === 'loading' && (
-          <div className="fixed inset-0  bg-black z-50">
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-900/90 p-16 rounded-2xl shadow-2xl w-96 border border-gray-700">
-              <div className="space-y-6">
-                {/* Loading Items (same as before) */}
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 border-2 border-green-500 rounded-full animate-spin border-t-transparent" />
-                    <span className="text-white/90 font-light">Determining search parameters...</span>
-                  </div>
-                  <div className="h-0.5 bg-gray-800 rounded-full overflow-hidden">
-                    <div className="w-1/3 h-full bg-green-500 animate-progress" />
-                  </div>
-                </div>
-                {/* Loading Item 2 */}
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 border-2 border-green-500 rounded-full animate-spin border-t-transparent" />
-                    <span className="text-white/90 font-light">Querying relevant cameras...</span>
-                  </div>
-                  <div className="h-0.5 bg-gray-800 rounded-full overflow-hidden">
-                    <div className="w-2/3 h-full bg-green-500 animate-progress delay-100" />
-                  </div>
-                </div>
-
-                {/* Loading Item 3 */}
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 border-2 border-green-500 rounded-full animate-spin border-t-transparent" />
-                    <span className="text-white/90 font-light">Analyzing live streams...</span>
-                  </div>
-                  <div className="h-0.5 bg-gray-800 rounded-full overflow-hidden">
-                    <div className="w-full h-full bg-green-500 animate-progress delay-200" />
-                  </div>
-                </div>              </div>
+        {/* Add Camera Popup */}
+        {showPopup && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+            <div className="bg-gray-900 p-6 rounded-xl shadow-lg w-96 border border-gray-700">
+              <h2 className="text-xl font-semibold text-white mb-4">Add New Camera</h2>
+              <input
+                type="text"
+                placeholder="Coordinates"
+                value={newCamCoords}
+                onChange={(e) => setNewCamCoords(e.target.value)}
+                className="w-full p-2 mb-3 rounded bg-gray-800 text-white focus:outline-none"
+              />
+              <input
+                type="text"
+                placeholder="Stream URL"
+                value={newCamUrl}
+                onChange={(e) => setNewCamUrl(e.target.value)}
+                className="w-full p-2 mb-3 rounded bg-gray-800 text-white focus:outline-none"
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={newCamDesc}
+                onChange={(e) => setNewCamDesc(e.target.value)}
+                className="w-full p-2 mb-4 rounded bg-gray-800 text-white focus:outline-none"
+              />
+              <div className="flex justify-between">
+                <button
+                  onClick={() => setShowPopup(false)}
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={addNewCamera}
+                  className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg text-white"
+                >
+                  Submit
+                </button>
+              </div>
             </div>
           </div>
         )}
       </>
     );
-  }
+  };
 
 
   if (state === 'map') {
