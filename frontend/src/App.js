@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { motion } from "framer-motion";
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
   const [newCamCoords, setNewCamCoords] = useState("");
   const [newCamUrl, setNewCamUrl] = useState("");
   const [newCamDesc, setNewCamDesc] = useState("");
+  const [newCamWalletID, setNewCamWalletID] = useState("");
   //END add new camera
 
   useEffect(() => {
@@ -23,9 +24,33 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+
+
+
   //Map page
   const [query_found_cam, set_query_found_cam] = useState();
   const [query_found_res, set_query_found_res] = useState();
+  const [allCams, setAllCams] = useState([]);
+
+
+  //load data forr map
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/get_all_cameras', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        console.log("ALL CAMERAS DATA:", data);
+        setAllCams(data);
+      } catch (error) {
+        console.error("Error fetching camera data:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (state === 'loading') {
@@ -176,9 +201,10 @@ function App() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         uid: newCamUid,
-        coords: newCamCoords,
-        url: newCamUrl,
-        desc: newCamDesc,
+        location: newCamCoords,
+        image_url: newCamUrl,
+        description: newCamDesc,
+        walletID: newCamWalletID,
       }),
     });
     setShowPopup(false);
@@ -224,7 +250,7 @@ function App() {
               <h2 className="text-xl font-semibold text-white mb-4">Add New Camera</h2>
               <input
                 type="text"
-                placeholder="Coordinates"
+                placeholder="Coordinates format: lat,long"
                 value={newCamCoords}
                 onChange={(e) => setNewCamCoords(e.target.value)}
                 className="w-full p-2 mb-3 rounded bg-gray-800 text-white focus:outline-none"
@@ -241,6 +267,13 @@ function App() {
                 placeholder="Description"
                 value={newCamDesc}
                 onChange={(e) => setNewCamDesc(e.target.value)}
+                className="w-full p-2 mb-4 rounded bg-gray-800 text-white focus:outline-none"
+              />
+              <input
+                type="text"
+                placeholder="Wallet Address (for rewards)"
+                value={newCamDesc}
+                onChange={(e) => setNewCamWalletID(e.target.value)}
                 className="w-full p-2 mb-4 rounded bg-gray-800 text-white focus:outline-none"
               />
               <div className="flex justify-between">
