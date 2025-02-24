@@ -78,7 +78,9 @@ function App() {
   const [newCamWalletID, setNewCamWalletID] = useState("");
   const [query_found_cam, set_query_found_cam] = useState();
   const [query_found_res, set_query_found_res] = useState();
+  const [allCams, setAllCams] = useState([]);
   const [currentBootStep, setCurrentBootStep] = useState(0);
+
 
 
   ///MAP STUFF
@@ -103,6 +105,26 @@ function App() {
 
   }, [state]);
 
+
+  //load data forr map
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/get_all_cameras', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        console.log("ALL CAMERAS DATA:", data);
+        setAllCams(data);
+      } catch (error) {
+        console.error("Error fetching camera data:", error);
+      }
+    }
+
+    fetchData();
+    // setState('map');
+  }, []);
 
   useEffect(() => {
     if (state === 'loading') {
@@ -438,10 +460,9 @@ function App() {
     return (
 
       <CyberMap
-        selectedCam={selectedCam}
+        allCams={allCams}
         query_found_res={query_found_res}
-        onCameraSelect={setSelectedCam}
-        onFaceSearch={(cam) => set_query_found_res(face_search_frontend(cam))}
+        query_found_cam={query_found_cam || null}
       />
 
     )

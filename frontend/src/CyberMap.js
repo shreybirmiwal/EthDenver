@@ -1,147 +1,100 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { motion } from 'framer-motion';
-import SpyAnalysisOverlay from './SpyAnalysisOverlay';
-import './home.css'
+import 'leaflet/dist/leaflet.css';
 
-function ChangeView({ center, zoom }) {
-    const map = useMap();
-    useEffect(() => {
-        if (center) {
-            map.flyTo(center, zoom, {
-                animate: true,
-                duration: 1.5,
-                easeLinearity: 0.25
-            });
-        }
-    }, [center, zoom, map]);
-    return null;
-}
+// Fix leaflet default icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
-const createMarkerIcon = (isHighlighted = false) =>
-    L.divIcon({
-        className: '',
-        iconSize: [24, 24],
-        html: (
-            <div className={`h-4 w-4 ${isHighlighted ? 'bg-red-500' : 'bg-green-500'} 
-        rounded-full border-2 border-green-300/30 shadow-cyber pulse`} />
-        )
+const CyberMap = ({ allCams, query_found_cam }) => {
+
+    console.log("INCOMING DATA TO MAP", allCams, query_found_cam);
+
+    const [mapCenter, setMapCenter] = useState([40.7128, -74.0060]); // Default NYC
+    const [mapZoom, setMapZoom] = useState(12);
+    const [processedQueryCam, setProcessedQueryCam] = useState(null);
+
+    // Custom icons
+    const defaultIcon = L.Icon.Default;
+    const queryCamIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
     });
 
-const CyberMap = ({
-    selectedCam,
-    query_found_res,
-    onCameraSelect,
-    onFaceSearch
-}) => {
-
-    const [allCams, setAllCams] = React.useState([]);
-
-    //load data forr map
+    // Handle query camera updates
     useEffect(() => {
-        const fetchData = async () => {
+        if (query_found_cam?.location) {
             try {
-                const response = await fetch('/api/get_all_cameras', {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                const data = await response.json();
-                console.log("ALL CAMERAS DATA:", data);
-                setAllCams(data);
-            } catch (error) {
-                console.error("Error fetching camera data:", error);
+                const [lat, lng] = query_found_cam.location.split(',').map(Number);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    setMapCenter([lat, lng]);
+                    setMapZoom(16);
+                    setProcessedQueryCam(query_found_cam);
+                }
+            } catch (e) {
+                console.error('Invalid query camera coordinates:', e);
             }
         }
+    }, [query_found_cam]);
 
-        fetchData();
-        // setState('map');
-    }, []);
-
-
-    const mapRef = useRef(null);
-
-    useEffect(() => {
-        if (selectedCam && mapRef.current) {
-            const map = mapRef.current;
-            // Find the correct marker using the uid
-            const marker = Object.values(map._layers).find(layer => {
-                return layer.options?.icon?.options?.className === 'selected-camera' &&
-                    layer._latlng.lat === parseFloat(selectedCam.location.split(',')[0]) &&
-                    layer._latlng.lng === parseFloat(selectedCam.location.split(',')[1]);
-            });
-
-            if (marker) {
-                // Delay popup open to match flyTo animation
-                setTimeout(() => {
-                    marker.openPopup();
-                }, 1500);
-            }
-        }
-    }, [selectedCam]);
+    // Component to handle view changes
+    const ChangeView = () => {
+        const map = useMap();
+        useEffect(() => {
+            map.setView(mapCenter, mapZoom);
+        }, [mapCenter, mapZoom, map]);
+        return null;
+    };
 
     return (
-        <div className="h-screen w-screen bg-black relative overflow-hidden">
+        <div className="h-screen w-full">
             <MapContainer
-                ref={mapRef}
-                center={[34, 60]}
-                zoom={3}
-                className="h-full w-full"
-                attributionControl={false}
-                zoomControl={false}
+                center={mapCenter}
+                zoom={mapZoom}
+                style={{ height: '100%', width: '100%' }}
             >
+                <ChangeView />
                 <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                    className="map-tiles"
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
 
-                {selectedCam && (
-                    <ChangeView
-                        center={selectedCam.location.split(',').map(Number)}
-                        zoom={16}
-                    />
-                )}
+                {/* Render all cameras */}
+                {allCams.map((cam) => {
+                    try {
+                        const [lat, lng] = cam.location?.split(',').map(Number);
+                        if (isNaN(lat) || isNaN(lng)) return null;
 
-                {allCams.map(cam => {
-                    const [lat, lng] = cam.location.split(',').map(Number);
-                    const isHighlighted = cam.uid === selectedCam?.uid;
-
-                    return (
-                        <Marker
-                            key={cam.uid}
-                            position={[lat, lng]}
-                            icon={createMarkerIcon(isHighlighted)}
-                            eventHandlers={{
-                                click: () => {
-                                    onCameraSelect(cam);
-                                    if (cam.face_search) {
-                                        onFaceSearch(cam);
-                                    }
-                                }
-                            }}
-                        >
-                            <Popup className="cyber-popup">
-                                <div className="relative">
-                                    <img
-                                        src={cam.image_url}
-                                        className="w-[600px] h-[400px] object-cover glow-border"
-                                        alt="Camera feed"
-                                    />
-                                    {cam.face_search && (
-                                        <div className="absolute inset-0 bg-black/50 p-4">
-                                            <SpyAnalysisOverlay data={query_found_res} />
-                                        </div>
-                                    )}
-                                </div>
-                            </Popup>
-                        </Marker>
-                    );
+                        return (
+                            <Marker
+                                key={cam.id}
+                                position={[lat, lng]}
+                                icon={cam.id === processedQueryCam?.id ? queryCamIcon : defaultIcon}
+                            >
+                                <Popup>
+                                    <div className="p-2">
+                                        <img
+                                            src={cam.image_url}
+                                            alt="Camera feed"
+                                            className="w-48 h-48 object-cover mb-2"
+                                        />
+                                        <p className="text-xs text-gray-600">{cam.description}</p>
+                                    </div>
+                                </Popup>
+                            </Marker>
+                        );
+                    } catch (e) {
+                        console.error('Invalid camera coordinates:', cam.location);
+                        return null;
+                    }
                 })}
             </MapContainer>
-
-            {query_found_res && (
-                <SpyAnalysisOverlay data={query_found_res} />
-            )}
         </div>
     );
 };
