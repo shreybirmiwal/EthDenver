@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from "framer-motion";
 
 function App() {
   const [state, setState] = useState('home');
 
   //Home page
   const [query, setQuery] = useState('');
+  const options = ["my lost dog", "the prison escapee", "my stolen car"];
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % options.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   //Map page
   const [query_found_cam, set_query_found_cam] = useState();
@@ -15,7 +24,7 @@ function App() {
       const timer = setTimeout(() => {
         console.log("Delayed action executed");
         setState('map');
-      }, 3000);
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [state]);
@@ -154,17 +163,68 @@ function App() {
 
   if (state === 'home') {
     return (
-      <div>
-        <input value={query} onChange={handleQueryChange} />
-        <button onClick={handleSubmit}>Submit</button>
+      <div className="flex items-center justify-center h-screen bg-black text-white">
+        <div className="text-center">
+          <h1 className="text-4xl font-light">
+            find me <motion.span className="text-green-400 font-bold" animate={{ opacity: [0, 1], transition: { duration: 0.8 } }}>{options[index]}</motion.span>
+          </h1>
+          <input
+            type="text"
+            value={query}
+            onChange={handleQueryChange}
+            className="mt-6 p-3 w-80 text-black rounded-lg focus:outline-none"
+            placeholder="Type your search..."
+          />
+          <button
+            onClick={handleSubmit}
+            className="ml-4 px-5 py-3 bg-green-500 hover:bg-green-600 rounded-lg text-black font-semibold"
+          >
+            Search
+          </button>
+        </div>
       </div>
     );
   }
 
   if (state === 'loading') {
     return (
-      <div>
-        <h1>Loading...</h1>
+      <div className="fixed inset-0 backdrop-blur-lg z-50 bg-black">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-900/90 p-8 rounded-2xl shadow-2xl w-96 border border-gray-700">
+          <div className="space-y-6">
+            {/* Loading Item 1 */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <div className="h-5 w-5 border-2 border-green-500 rounded-full animate-spin border-t-transparent" />
+                <span className="text-white/90 font-light">Determining search parameters...</span>
+              </div>
+              <div className="h-0.5 bg-gray-800 rounded-full overflow-hidden">
+                <div className="w-1/3 h-full bg-green-500 animate-progress" />
+              </div>
+            </div>
+
+            {/* Loading Item 2 */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <div className="h-5 w-5 border-2 border-green-500 rounded-full animate-spin border-t-transparent" />
+                <span className="text-white/90 font-light">Querying relevant cameras...</span>
+              </div>
+              <div className="h-0.5 bg-gray-800 rounded-full overflow-hidden">
+                <div className="w-2/3 h-full bg-green-500 animate-progress delay-100" />
+              </div>
+            </div>
+
+            {/* Loading Item 3 */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <div className="h-5 w-5 border-2 border-green-500 rounded-full animate-spin border-t-transparent" />
+                <span className="text-white/90 font-light">Analyzing live streams...</span>
+              </div>
+              <div className="h-0.5 bg-gray-800 rounded-full overflow-hidden">
+                <div className="w-full h-full bg-green-500 animate-progress delay-200" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
