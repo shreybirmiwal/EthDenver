@@ -250,14 +250,13 @@ def answer_query_no_face():
     except Exception as e:
         print(f"Error analyzing image: {str(e)}")
         return jsonify({"error": f"Error analyzing image: {str(e)}"}), 500
-    
 
 
 @app.route('/api/add_camera', methods=['POST'])
 def add_camera():
     try:
         data = request.json
-        required_fields = ["uid", "location", "image_url", "description"]
+        required_fields = ["uid", "location", "image_url", "description", 'walletID']
         if any(field not in data for field in required_fields):
             return jsonify({'error': 'Missing fields in request'}), 400
 
@@ -273,13 +272,16 @@ def add_camera():
             metadatas=[{
                 "location": data['location'],
                 "image_url": data['image_url'],
-                "description": data['description'] + image_frame_description
+                "description": data['description'] + image_frame_description,
+                "walletID": data['walletID']
+            
             }],
             ids=[data['uid']],
             embeddings=[embedding]
         )
         return jsonify({'message': 'Camera added successfully'}), 200
     except Exception as e:
+        print(f"Error adding camera: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
     
