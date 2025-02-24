@@ -7,6 +7,19 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Popup } from 'react-leaflet';
 
+function ChangeView({ center, zoom }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.flyTo(center, zoom, {
+        animate: true,
+        duration: 1.5,
+        easeLinearity: 0.25
+      });
+    }
+  }, [center, zoom, map]);
+  return null;
+}
 
 const TerminalInput = ({ label, value, onChange, placeholder }) => (
   <div className="mb-4">
@@ -87,26 +100,19 @@ function App() {
 
 
   ///MAP STUFF
+  /// Modified MAP STUFF
   const mapRef = useRef(null);
   const [selectedCam, setSelectedCam] = useState(null);
+
   const createMarkerIcon = (isHighlighted = false) => L.divIcon({
     className: '',
     iconSize: [24, 24],
     html: `
-      <div class="${isHighlighted ?
-        'animate-pulse h-6 w-6 bg-green-400 blur-[1px]' :
-        'h-4 w-4 bg-green-500'} 
+      <div class="h-4 w-4 bg-green-500
         rounded-full border-2 border-green-300/30 shadow-cyber">
       </div>
     `
   });
-  const flyToLocation = (latlng) => {
-    mapRef.current?.flyTo(latlng, 12, {
-      animate: true,
-      duration: 1.5,
-      easeLinearity: 0.25
-    });
-  };
   ///END MAP STUFF
 
   useEffect(() => {
@@ -123,14 +129,6 @@ function App() {
       return () => clearInterval(timer);
     }
 
-    if (state === 'map') {
-      //we just swtiched to map stat
-      console.log(" flying to location" + query_found_cam.location);
-      if (query_found_cam) {
-        const [lat, lng] = query_found_cam.location.split(',').map(Number);
-        flyToLocation([lat, lng]);
-      }
-    }
   }, [state]);
 
 
@@ -162,6 +160,18 @@ function App() {
       }, 3000);
       return () => clearTimeout(timer);
     }
+
+    // if (state === 'map') {
+    //   //we just swtiched to map stat
+    //   console.log("query found cam", query_found_cam);
+    //   console.log(" flying to location" + query_found_cam.location);
+    //   if (query_found_cam) {
+    //     const [lat, lng] = query_found_cam.location.split(',').map(Number);
+    //     flyToLocation([lat, lng]);
+
+    //     setSelectedCam(query_found_cam);
+    //   }
+    // }
   }, [state]);
 
 
@@ -192,12 +202,16 @@ function App() {
     if (location == -1) {
       console.log("Location not found");
       //now we need to search by description
-      var cam = searchByDescription(query, face_search);
+      var cam = await searchByDescription(query, face_search);
+      console.log("FOUND QUERY FOUND CAM PRE: ", cam)
       set_query_found_cam(cam);
+      setSelectedCam(cam);
     }
     else {
-      var cam = searchByLocation(location, face_search, query);
+      var cam = await searchByLocation(location, face_search, query);
+      console.log("FOUND QUERY FOUND CAM PRE: ", cam)
       set_query_found_cam(cam);
+      setSelectedCam(cam);
       console.log("cam location found at: ID ", cam);
     }
 
@@ -469,7 +483,6 @@ function App() {
   }
 
   if (state === 'map') {
-
     return (
       <div className="h-screen w-screen bg-black relative overflow-hidden">
         <MapContainer
@@ -485,10 +498,18 @@ function App() {
             className="map-tiles"
           />
 
+          {/* Add the ChangeView component */}
+          {selectedCam && (
+            (() => {
+              const [lat, lng] = selectedCam.location.split(',').map(Number);
+              return <ChangeView center={[lat, lng]} zoom={12} />;
+            })()
+          )}
+
           {/* All Camera Markers */}
           {allCams.map(cam => {
             const [lat, lng] = cam.location.split(',').map(Number);
-            const isHighlighted = cam.uid === query_found_cam?.uid;
+            const isHighlighted = cam.uid === selectedCam?.uid;
 
             return (
               <Marker
@@ -498,7 +519,6 @@ function App() {
                 eventHandlers={{
                   click: () => {
                     setSelectedCam(cam);
-                    flyToLocation([lat, lng]);
                   }
                 }}
               >
@@ -509,13 +529,10 @@ function App() {
                     alt="Camera feed"
                   />
                 </Popup>
-
               </Marker>
             );
           })}
-
         </MapContainer>
-
       </div>
     );
   }
