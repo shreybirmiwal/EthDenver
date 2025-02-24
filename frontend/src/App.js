@@ -51,7 +51,7 @@ function App() {
     }
 
     fetchData();
-    setState('map');
+    // setState('map');
   }, []);
 
   useEffect(() => {
@@ -198,11 +198,13 @@ function App() {
   const addNewCamera = async () => {
     const newCamUid = Math.floor(Math.random() * 1000000);
 
+    console.log("Adding new camera:", newCamUid, newCamCoords, newCamUrl, newCamDesc, newCamWalletID);
+
     await fetch("/api/add_camera", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        uid: newCamUid,
+        uid: String(newCamUid),
         location: newCamCoords,
         image_url: newCamUrl,
         description: newCamDesc,
@@ -274,7 +276,7 @@ function App() {
               <input
                 type="text"
                 placeholder="Wallet Address (for rewards)"
-                value={newCamDesc}
+                value={newCamWalletID}
                 onChange={(e) => setNewCamWalletID(e.target.value)}
                 className="w-full p-2 mb-4 rounded bg-gray-800 text-white focus:outline-none"
               />
