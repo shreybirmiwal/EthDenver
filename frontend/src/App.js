@@ -5,21 +5,8 @@ import './home.css';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Popup } from 'react-leaflet';
+import CyberMap from './CyberMap';
 
-function ChangeView({ center, zoom }) {
-  const map = useMap();
-  useEffect(() => {
-    if (center) {
-      map.flyTo(center, zoom, {
-        animate: true,
-        duration: 1.5,
-        easeLinearity: 0.25
-      });
-    }
-  }, [center, zoom, map]);
-  return null;
-}
 
 const TerminalInput = ({ label, value, onChange, placeholder }) => (
   <div className="mb-4">
@@ -101,18 +88,8 @@ function App() {
 
   ///MAP STUFF
   /// Modified MAP STUFF
-  const mapRef = useRef(null);
   const [selectedCam, setSelectedCam] = useState(null);
 
-  const createMarkerIcon = (isHighlighted = false) => L.divIcon({
-    className: '',
-    iconSize: [24, 24],
-    html: `
-      <div class="h-4 w-4 bg-green-500
-        rounded-full border-2 border-green-300/30 shadow-cyber">
-      </div>
-    `
-  });
   ///END MAP STUFF
 
   useEffect(() => {
@@ -484,57 +461,16 @@ function App() {
 
   if (state === 'map') {
     return (
-      <div className="h-screen w-screen bg-black relative overflow-hidden">
-        <MapContainer
-          ref={mapRef}
-          center={[34, 60]}
-          zoom={3}
-          className="h-full w-full"
-          attributionControl={false}
-          zoomControl={false}
-        >
-          <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            className="map-tiles"
-          />
 
-          {/* Add the ChangeView component */}
-          {selectedCam && (
-            (() => {
-              const [lat, lng] = selectedCam.location.split(',').map(Number);
-              return <ChangeView center={[lat, lng]} zoom={12} />;
-            })()
-          )}
+      <CyberMap
+        selectedCam={selectedCam}
+        allCams={allCams}
+        query_found_res={query_found_res}
+        onCameraSelect={setSelectedCam}
+        onFaceSearch={(cam) => set_query_found_res(face_search_frontend(cam))}
+      />
 
-          {/* All Camera Markers */}
-          {allCams.map(cam => {
-            const [lat, lng] = cam.location.split(',').map(Number);
-            const isHighlighted = cam.uid === selectedCam?.uid;
-
-            return (
-              <Marker
-                key={cam.uid}
-                position={[lat, lng]}
-                icon={createMarkerIcon(isHighlighted)}
-                eventHandlers={{
-                  click: () => {
-                    setSelectedCam(cam);
-                  }
-                }}
-              >
-                <Popup className="cyber-popup">
-                  <img
-                    src={cam.image_url}
-                    className="w-[600px] h-[600px] object-cover mb-3 glow-border"
-                    alt="Camera feed"
-                  />
-                </Popup>
-              </Marker>
-            );
-          })}
-        </MapContainer>
-      </div>
-    );
+    )
   }
 }
 
