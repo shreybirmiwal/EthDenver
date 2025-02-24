@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { motion } from 'framer-motion';
 import SpyAnalysisOverlay from './SpyAnalysisOverlay';
+import './home.css'
 
 function ChangeView({ center, zoom }) {
     const map = useMap();
@@ -30,29 +31,52 @@ const createMarkerIcon = (isHighlighted = false) =>
 
 const CyberMap = ({
     selectedCam,
-    allCams,
     query_found_res,
     onCameraSelect,
     onFaceSearch
 }) => {
+
+    const [allCams, setAllCams] = React.useState([]);
+
+    //load data forr map
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('/api/get_all_cameras', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                console.log("ALL CAMERAS DATA:", data);
+                setAllCams(data);
+            } catch (error) {
+                console.error("Error fetching camera data:", error);
+            }
+        }
+
+        fetchData();
+        // setState('map');
+    }, []);
+
+
     const mapRef = useRef(null);
 
     useEffect(() => {
         if (selectedCam && mapRef.current) {
-            const [lat, lng] = selectedCam.location.split(',').map(Number);
             const map = mapRef.current;
-
-            map.flyTo([lat, lng], 16, {
-                animate: true,
-                duration: 1.5
+            // Find the correct marker using the uid
+            const marker = Object.values(map._layers).find(layer => {
+                return layer.options?.icon?.options?.className === 'selected-camera' &&
+                    layer._latlng.lat === parseFloat(selectedCam.location.split(',')[0]) &&
+                    layer._latlng.lng === parseFloat(selectedCam.location.split(',')[1]);
             });
 
-            // Open popup after animation
-            setTimeout(() => {
-                const marker = Object.values(map._layers)
-                    .find(layer => layer.options?.icon?.options?.className === 'selected-camera');
-                if (marker) marker.openPopup();
-            }, 1500);
+            if (marker) {
+                // Delay popup open to match flyTo animation
+                setTimeout(() => {
+                    marker.openPopup();
+                }, 1500);
+            }
         }
     }, [selectedCam]);
 

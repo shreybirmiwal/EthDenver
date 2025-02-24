@@ -58,3 +58,38 @@
         clip: rect(12px, 9999px, 98px, 0)
     }
 }
+
+
+.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+.cyber-popup .leaflet-popup-content-wrapper {
+    background: black !important;
+    border: 2px solid #00ff00 !important;
+    border-radius: 0 !important;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.cyber-popup .leaflet-popup-tip {
+    background: black !important;
+    border: 2px solid #00ff00 !important;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
