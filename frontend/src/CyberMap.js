@@ -21,44 +21,41 @@ const DarkTileLayer = () => (
 
 const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
 
-
-
-    console.log("UUUUU" + query_found_res)
-    const [mapCenter, setMapCenter] = useState([40.7128, -74.0060]);
-    const [mapZoom, setMapZoom] = useState(12);
+    const [view, setView] = useState({
+        center: [40.7128, -74.0060],
+        zoom: 6
+    });
     const [selectedCam, setSelectedCam] = useState(null);
     const [autoOpenDone, setAutoOpenDone] = useState(false);
 
     const defaultIcon = createDotIcon();
 
+    function ChangeView({ center, zoom }) {
+        const map = useMap();
+        useEffect(() => {
+            map.flyTo(center, zoom, { duration: 1 });
+        }, [center, zoom, map]);
+        return null;
+    }
+
     useEffect(() => {
         if (query_found_cam?.location && !autoOpenDone) {
             try {
                 const [lat, lng] = query_found_cam.location.split(',').map(Number);
-                if (!isNaN(lat) && !isNaN(lng)) {
-                    setMapCenter([lat, lng]);
-                    setMapZoom(16);
-                    setSelectedCam(query_found_cam);
-                    setAutoOpenDone(true);
-                }
+
+                // Set proper coordinates and higher zoom
+                setView({
+                    center: [lat, lng],
+                    zoom: 10 // Closer zoom level
+                });
+                setSelectedCam(query_found_cam);
+                setAutoOpenDone(true);
+
             } catch (e) {
                 console.error('Invalid query camera coordinates:', e);
             }
         }
     }, [query_found_cam, autoOpenDone]);
-
-
-    const goToCam = (location) => {
-        try {
-            const [lat, lng] = location.split(',').map(Number);
-            if (!isNaN(lat) && !isNaN(lng)) {
-                setMapCenter([lat, lng]);
-                setMapZoom(16);
-            }
-        } catch (e) {
-            console.error('Invalid camera coordinates:', location);
-        }
-    }
 
     const CentralPopup = () => {
         if (!selectedCam) return null;
@@ -78,7 +75,7 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                             className="w-full h-full object-contain"
                         />
                     </div>
-                    <div className="w-1/2 p-4 font-mono text-green-500" onClick={() => goToCam(selectedCam.location)}>
+                    <div className="w-1/2 p-4 font-mono text-green-500">
                         <div className="terminal-text">
                             > INITIALIZING SURVEILLANCE MODULE...
                             <br />
@@ -87,6 +84,16 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                             > CAMERA ID: {selectedCam.uid}
 
                         </div>
+
+                        {selectedCam.uid === query_found_cam?.uid &&
+                            <div className="terminal-text">
+                                <br />
+                                > QUERY RESULT:
+                                <br />
+                                {query_found_res.name}
+                            </div>
+
+                        }
                     </div>
                 </div>
             </div>
@@ -96,11 +103,12 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
     return (
         <div className="h-screen w-full cyber-map-container">
             <MapContainer
-                center={mapCenter}
-                zoom={mapZoom}
+                center={view.center}
+                zoom={view.zoom}
                 style={{ height: '100%', width: '100%' }}
                 attributionControl={false}
             >
+                <ChangeView center={view.center} zoom={view.zoom} />
                 <DarkTileLayer />
                 {allCams.map((cam) => {
                     try {
