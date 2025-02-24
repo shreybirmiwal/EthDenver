@@ -1,0 +1,18 @@
+# Use an official Python runtime as a parent image
+FROM python:3.9
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 && \
+    pip install --no-cache-dir face_recognition requests pillow
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy script and known faces folder into the container
+COPY face_recognition_script.py .
+COPY known_faces/ known_faces/
+
+# Define the command to run the script with an argument
+CMD ["python", "face_recognition_script.py"]
