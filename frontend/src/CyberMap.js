@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './home.css';
 
-// Simple green dot icon
 const createDotIcon = () => {
     return new L.DivIcon({
         className: 'green-dot-marker',
@@ -16,20 +15,22 @@ const createDotIcon = () => {
 const DarkTileLayer = () => (
     <TileLayer
         url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution=''
     />
 );
 
-const CyberMap = ({ allCams, query_found_cam }) => {
+const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
+
+
+
+    console.log("UUUUU" + query_found_res)
     const [mapCenter, setMapCenter] = useState([40.7128, -74.0060]);
     const [mapZoom, setMapZoom] = useState(12);
     const [selectedCam, setSelectedCam] = useState(null);
     const [autoOpenDone, setAutoOpenDone] = useState(false);
 
-    // Simple green dot icon
     const defaultIcon = createDotIcon();
 
-    // Handle initial query camera focus
     useEffect(() => {
         if (query_found_cam?.location && !autoOpenDone) {
             try {
@@ -46,14 +47,30 @@ const CyberMap = ({ allCams, query_found_cam }) => {
         }
     }, [query_found_cam, autoOpenDone]);
 
-    // Custom popup component
+
+    const goToCam = (location) => {
+        try {
+            const [lat, lng] = location.split(',').map(Number);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                setMapCenter([lat, lng]);
+                setMapZoom(16);
+            }
+        } catch (e) {
+            console.error('Invalid camera coordinates:', location);
+        }
+    }
+
     const CentralPopup = () => {
         if (!selectedCam) return null;
 
         return (
-            <div className="fixed inset-0 flex items-center justify-center z-[1000] pointer-events-none">
-                <div className="bg-black border-2 border-green-500 w-3/4 h-3/4 flex">
-                    {/* Left side - Camera feed */}
+            <div className="fixed inset-0 flex items-center justify-center z-[1000] pointer-events-none" onClick={() => setSelectedCam(null)}>
+                <div className="bg-black border-2 border-green-500 w-3/4 h-3/4 flex relative pointer-events-auto p-2">
+                    <button
+                        className="absolute top-2 right-2 text-green-500 hover:text-green-700"
+                    >
+                        X
+                    </button>
                     <div className="w-1/2 border-r-2 border-green-500 p-4">
                         <img
                             src={selectedCam.image_url}
@@ -61,17 +78,14 @@ const CyberMap = ({ allCams, query_found_cam }) => {
                             className="w-full h-full object-contain"
                         />
                     </div>
-
-                    {/* Right side - Terminal */}
-                    <div className="w-1/2 p-4 font-mono text-green-500">
+                    <div className="w-1/2 p-4 font-mono text-green-500" onClick={() => goToCam(selectedCam.location)}>
                         <div className="terminal-text">
-              > INITIALIZING SURVEILLANCE MODULE...
+                            > INITIALIZING SURVEILLANCE MODULE...
                             <br />
-              > SYSTEM TIME: {new Date().toLocaleTimeString()}
+                            > SYSTEM TIME: {new Date().toLocaleTimeString()}
                             <br />
-              > CAMERA ID: {selectedCam.id}
-                            <br /><br />
-              > HELLO WORLD
+                            > CAMERA ID: {selectedCam.uid}
+
                         </div>
                     </div>
                 </div>
@@ -85,10 +99,9 @@ const CyberMap = ({ allCams, query_found_cam }) => {
                 center={mapCenter}
                 zoom={mapZoom}
                 style={{ height: '100%', width: '100%' }}
+                attributionControl={false}
             >
                 <DarkTileLayer />
-
-                {/* Render all cameras */}
                 {allCams.map((cam) => {
                     try {
                         const [lat, lng] = cam.location?.split(',').map(Number);
@@ -112,7 +125,6 @@ const CyberMap = ({ allCams, query_found_cam }) => {
                     }
                 })}
             </MapContainer>
-
             <CentralPopup />
         </div>
     );

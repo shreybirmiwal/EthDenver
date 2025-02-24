@@ -208,8 +208,9 @@ function App() {
     const data = await response.json();
     console.log("WE NEED FACE SEARCH?" + face_search + "FULL DATA:", data)
     if (face_search) {
-      var res = face_search_frontend(data);
+      var res = await face_search_frontend(data);
       set_query_found_res(res);
+      console.log("We found a res ", res)
     }
     else {
 
@@ -239,8 +240,9 @@ function App() {
     const data = await response.json();
     console.log("WE NEED FACE SEARCH?" + face_search + "FULL DATA:", data)
     if (face_search) {
-      var res = face_search_frontend(data);
+      var res = await face_search_frontend(data);
       set_query_found_res(res);
+      console.log("We found a res ", res)
     }
     else {
       set_query_found_res("")
