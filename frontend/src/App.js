@@ -1,5 +1,6 @@
 import React, { useState, useEffect, use } from 'react';
 import { motion } from "framer-motion";
+import MapState from './MapState';
 
 function App() {
   const [state, setState] = useState('home');
@@ -50,6 +51,7 @@ function App() {
     }
 
     fetchData();
+    setState('map');
   }, []);
 
   useEffect(() => {
@@ -300,9 +302,10 @@ function App() {
 
   if (state === 'map') {
     return (
-      <div>
-        <h1>Map</h1>
-      </div>
+      <MapState
+        allCams={allCams}
+        queryFoundCam={query_found_cam}
+      />
     );
   }
 }
