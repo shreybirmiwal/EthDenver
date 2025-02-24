@@ -1,8 +1,22 @@
 import React, { useState, useEffect, use } from 'react';
 import { motion } from "framer-motion";
 import MapState from './MapState';
+import './home.css'
+
+
+const bootSequence = [
+  'INITIALIZING MAINFRAME OS...',
+  'MOUNTING /dev/sda1... OK',
+  'LOADING CRYPTO MODULES... OK',
+  'CHECKING NETWORK INTERFACES... OK',
+  'STARTING SSH DAEMON... OK',
+  'ESTABLISHING QUANTUM LINK... CONNECTED',
+  'WARNING: SYSTEM PROBES DETECTED',
+  'AUTHENTICATING USER... BIOMETRICS CONFIRMED'
+]
 
 function App() {
+
   const [state, setState] = useState('home');
 
   //Home page
@@ -216,90 +230,130 @@ function App() {
 
   if (state === 'home' || state === 'loading') {
     return (
-      <>
-        <div className="flex items-center justify-center h-screen bg-black text-white relative">
+      <div className="h-screen bg-black overflow-hidden font-mono">
+        {/* CRT Screen Effect */}
+        <div className="crt-screen fixed inset-0 pointer-events-none"></div>
+
+        <div className="relative h-full text-green-500 p-8">
+          {/* Boot Sequence Animation */}
+          {bootSequence.map((line, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: idx * 0.3 }}
+              className="text-sm mb-1"
+            >
+              {line}
+            </motion.div>
+          ))}
+
+          {/* SSH Login Animation */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: bootSequence.length * 0.3 }}
+          >
+            <div className="mt-4">
+              <span className="text-green-400">ssh user@mainframe</span>
+            </div>
+
+            {/* Main Interface */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="mt-8"
+            >
+              <div className="text-2xl mb-6 glitch" data-text="">
+                MAINFRAME ACCESS GRANTED
+              </div>
+
+              <div className="flex items-center">
+                <span className="mr-2">{'>'}</span>
+                {query === '' ? (
+                  <span className="animate-blink">▌</span>
+                ) : (
+
+                  <span className="animate-blink"></span>
+                )}
+
+                <input
+                  type="text"
+                  value={query}
+                  onChange={handleQueryChange}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+                  className="w-96 bg-transparent border-none focus:outline-none text-green-500 caret-green-500 placeholder-gray-500"
+                  placeholder="ENTER SEARCH PARAMETERS..."
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+
           {/* Add Camera Button */}
           <button
             onClick={() => setShowPopup(true)}
-            className="absolute top-5 right-5 px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg text-black font-semibold"
+            className="absolute top-4 right-4 text-green-500 hover:text-green-400 underline underline-offset-4 decoration-dashed"
           >
-            + Add Camera
+            [INIT-CAMERA-PROTOCOL]
           </button>
-
-          {/* Original Homepage Content */}
-          <div className="text-center">
-            <h1 className="text-4xl font-light">
-              find me <motion.span className="text-green-400 font-bold" animate={{ opacity: [0, 1], transition: { duration: 0.8 } }}>{options[index]}</motion.span>
-            </h1>
-            <input
-              type="text"
-              value={query}
-              onChange={handleQueryChange}
-              className="mt-6 p-3 w-80 text-black rounded-lg focus:outline-none"
-              placeholder="Type your search..."
-            />
-            <button
-              onClick={handleSubmit}
-              className="ml-4 px-5 py-3 bg-green-500 hover:bg-green-600 rounded-lg text-black font-semibold"
-            >
-              Search
-            </button>
-          </div>
         </div>
 
-        {/* Add Camera Popup */}
+        {/* Add Camera Popup - Terminal Style */}
         {showPopup && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-            <div className="bg-gray-900 p-6 rounded-xl shadow-lg w-96 border border-gray-700">
-              <h2 className="text-xl font-semibold text-white mb-4">Add New Camera</h2>
-              <input
-                type="text"
-                placeholder="Coordinates format: lat,long"
+          <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+            <div className="bg-black p-8 border-2 border-green-500 w-[500px] shadow-glow">
+              <div className="text-lg mb-4">[CAMERA CONFIGURATION]</div>
+
+              <TerminalInput
+                label="COORDINATES"
                 value={newCamCoords}
                 onChange={(e) => setNewCamCoords(e.target.value)}
-                className="w-full p-2 mb-3 rounded bg-gray-800 text-white focus:outline-none"
+                placeholder="FORMAT: XX.XXXX,YY.YYYY"
               />
-              <input
-                type="text"
-                placeholder="Stream URL"
+
+              <TerminalInput
+                label="STREAM URL"
                 value={newCamUrl}
                 onChange={(e) => setNewCamUrl(e.target.value)}
-                className="w-full p-2 mb-3 rounded bg-gray-800 text-white focus:outline-none"
               />
-              <input
-                type="text"
-                placeholder="Description"
-                value={newCamDesc}
-                onChange={(e) => setNewCamDesc(e.target.value)}
-                className="w-full p-2 mb-4 rounded bg-gray-800 text-white focus:outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Wallet Address (for rewards)"
-                value={newCamWalletID}
-                onChange={(e) => setNewCamWalletID(e.target.value)}
-                className="w-full p-2 mb-4 rounded bg-gray-800 text-white focus:outline-none"
-              />
-              <div className="flex justify-between">
+
+              <div className="flex gap-4 mt-6">
                 <button
                   onClick={() => setShowPopup(false)}
-                  className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg text-white"
+                  className="text-red-500 hover:text-red-400 border border-red-500 px-4 py-2"
                 >
-                  Cancel
+                  [ABORT]
                 </button>
                 <button
                   onClick={addNewCamera}
-                  className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg text-white"
+                  className="text-green-500 hover:text-green-400 border border-green-500 px-4 py-2"
                 >
-                  Submit
+                  [COMMIT]
                 </button>
               </div>
             </div>
           </div>
         )}
-      </>
+      </div>
     );
-  };
+  }
+
+  // TerminalInput component
+  const TerminalInput = ({ label, value, onChange, placeholder }) => (
+    <div className="mb-4">
+      <div className="text-green-500 text-sm mb-1">{label}:</div>
+      <div className="flex items-center">
+        <span className="mr-2">{'>'}</span>
+        <input
+          type="text"
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className="bg-transparent border-none focus:outline-none text-green-500 w-full caret-green-500"
+        />
+      </div>
+    </div>
+  );
 
 
   if (state === 'map') {

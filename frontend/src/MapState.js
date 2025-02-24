@@ -65,14 +65,13 @@ const MapState = ({ allCams, query_found_cam }) => {
                             }}
                         >
                             <Popup className="cyber-popup">
-                                <div className="bg-gray-900 p-4 border border-green-400/20 rounded-lg shadow-2xl">
-                                    <img
-                                        src={cam.image_url}
-                                        className="w-40 h-30 object-cover mb-3 glow-border"
-                                        alt="Camera feed"
-                                    />
-                                </div>
+                                <img
+                                    src={cam.image_url}
+                                    className="w-[600px] h-[600px] object-cover mb-3 glow-border"
+                                    alt="Camera feed"
+                                />
                             </Popup>
+
                         </Marker>
                     );
                 })}
