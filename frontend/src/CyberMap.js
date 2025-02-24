@@ -2,68 +2,91 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import './home.css';
 
-// Fix leaflet default icon
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+// Simple green dot icon
+const createDotIcon = () => {
+    return new L.DivIcon({
+        className: 'green-dot-marker',
+        iconSize: [12, 12],
+        iconAnchor: [6, 6],
+    });
+};
+
+const DarkTileLayer = () => (
+    <TileLayer
+        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    />
+);
 
 const CyberMap = ({ allCams, query_found_cam }) => {
-
-    console.log("INCOMING DATA TO MAP", allCams, query_found_cam);
-
-    const [mapCenter, setMapCenter] = useState([40.7128, -74.0060]); // Default NYC
+    const [mapCenter, setMapCenter] = useState([40.7128, -74.0060]);
     const [mapZoom, setMapZoom] = useState(12);
-    const [processedQueryCam, setProcessedQueryCam] = useState(null);
+    const [selectedCam, setSelectedCam] = useState(null);
+    const [autoOpenDone, setAutoOpenDone] = useState(false);
 
-    // Custom icons
-    const defaultIcon = L.Icon.Default;
-    const queryCamIcon = new L.Icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-    });
+    // Simple green dot icon
+    const defaultIcon = createDotIcon();
 
-    // Handle query camera updates
+    // Handle initial query camera focus
     useEffect(() => {
-        if (query_found_cam?.location) {
+        if (query_found_cam?.location && !autoOpenDone) {
             try {
                 const [lat, lng] = query_found_cam.location.split(',').map(Number);
                 if (!isNaN(lat) && !isNaN(lng)) {
                     setMapCenter([lat, lng]);
                     setMapZoom(16);
-                    setProcessedQueryCam(query_found_cam);
+                    setSelectedCam(query_found_cam);
+                    setAutoOpenDone(true);
                 }
             } catch (e) {
                 console.error('Invalid query camera coordinates:', e);
             }
         }
-    }, [query_found_cam]);
+    }, [query_found_cam, autoOpenDone]);
 
-    // Component to handle view changes
-    const ChangeView = () => {
-        const map = useMap();
-        useEffect(() => {
-            map.setView(mapCenter, mapZoom);
-        }, [mapCenter, mapZoom, map]);
-        return null;
+    // Custom popup component
+    const CentralPopup = () => {
+        if (!selectedCam) return null;
+
+        return (
+            <div className="fixed inset-0 flex items-center justify-center z-[1000] pointer-events-none">
+                <div className="bg-black border-2 border-green-500 w-3/4 h-3/4 flex">
+                    {/* Left side - Camera feed */}
+                    <div className="w-1/2 border-r-2 border-green-500 p-4">
+                        <img
+                            src={selectedCam.image_url}
+                            alt="Camera feed"
+                            className="w-full h-full object-contain"
+                        />
+                    </div>
+
+                    {/* Right side - Terminal */}
+                    <div className="w-1/2 p-4 font-mono text-green-500">
+                        <div className="terminal-text">
+              > INITIALIZING SURVEILLANCE MODULE...
+                            <br />
+              > SYSTEM TIME: {new Date().toLocaleTimeString()}
+                            <br />
+              > CAMERA ID: {selectedCam.id}
+                            <br /><br />
+              > HELLO WORLD
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     return (
-        <div className="h-screen w-full">
+        <div className="h-screen w-full cyber-map-container">
             <MapContainer
                 center={mapCenter}
                 zoom={mapZoom}
                 style={{ height: '100%', width: '100%' }}
             >
-                <ChangeView />
-                <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
+                <DarkTileLayer />
 
                 {/* Render all cameras */}
                 {allCams.map((cam) => {
@@ -75,19 +98,13 @@ const CyberMap = ({ allCams, query_found_cam }) => {
                             <Marker
                                 key={cam.id}
                                 position={[lat, lng]}
-                                icon={cam.id === processedQueryCam?.id ? queryCamIcon : defaultIcon}
-                            >
-                                <Popup>
-                                    <div className="p-2">
-                                        <img
-                                            src={cam.image_url}
-                                            alt="Camera feed"
-                                            className="w-48 h-48 object-cover mb-2"
-                                        />
-                                        <p className="text-xs text-gray-600">{cam.description}</p>
-                                    </div>
-                                </Popup>
-                            </Marker>
+                                icon={defaultIcon}
+                                eventHandlers={{
+                                    click: () => {
+                                        setSelectedCam(cam);
+                                    }
+                                }}
+                            />
                         );
                     } catch (e) {
                         console.error('Invalid camera coordinates:', cam.location);
@@ -95,6 +112,8 @@ const CyberMap = ({ allCams, query_found_cam }) => {
                     }
                 })}
             </MapContainer>
+
+            <CentralPopup />
         </div>
     );
 };
