@@ -23,7 +23,6 @@ const bootSequence = [
   'INITIALIZING CYBER MAINFRAME...',
   'ACCESSING CORE MEMORY...',
   '                                                                                                                                       ',
-  '                                                                                                                                       ',
   '008800000800      680888880800      800008            0088088880800      800    680085   3               00 308000                     ',
   '000088008008      600000000800      808808              086      80       8   085    00                00008    000                    ',
   '080000800088      608008008008      800008              00        0          708     608                888      083                   ',
@@ -50,7 +49,6 @@ const bootSequence = [
   '080800800088008008008008008008008008                    00         0  580   600        0    600              08                        ',
   '080080080000800080080080080080080080                    802       60 600    880       0      808       02    00                        ',
   '080080880800800800800880080080080080                   0800     8000  000200 080  0008        008000880     2808                       ',
-  '                                                                                                                                       ',
   '                                                                                                                                       ',
   'BIOS VERSION 0xDEADBEEF',
   'MEMORY TEST: 64K OK',
@@ -184,8 +182,12 @@ function App() {
       set_query_found_res(res);
     }
     else {
-      var res = answer_query_no_face_search(data, query);
-      set_query_found_res(res);
+
+      set_query_found_res("")
+      // FOR NOW NO FACE SEARCH IS DISABLE
+
+      // var res = answer_query_no_face_search(data, query);
+      // set_query_found_res(res);
     }
 
     setState('loading')
@@ -211,8 +213,12 @@ function App() {
       set_query_found_res(res);
     }
     else {
-      var res = answer_query_no_face_search(data, query);
-      set_query_found_res(res);
+      set_query_found_res("")
+
+      // FOR NOW NO FACE SEARCH IS DISABLED
+
+      // var res = answer_query_no_face_search(data, query);
+      // set_query_found_res(res);
     }
 
     return data
@@ -372,6 +378,37 @@ function App() {
               </div>
             </div>
           )}
+
+          {state === 'loading' && (
+            <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+              <div className="bg-black p-8 border-2 border-green-500 w-[500px] shadow-glow">
+                <div className="text-lg mb-4">[INITIALIZING CAMERA PROTOCOL]</div>
+
+                {/* Loading status lines */}
+                <div className="space-y-4 text-green-500">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+                    <span>Finding relevant cameras....</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+                    <span>Querying camera vectors....</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+                    <span>Augmenting query response...</span>
+                  </div>
+                </div>
+
+                <div className="mt-6 text-xs text-green-500/80">
+                  System Status: Initializing neural network overlay...
+                </div>
+              </div>
+            </div>
+          )}
+
           <div ref={terminalEndRef} />
         </div>
       </div>
