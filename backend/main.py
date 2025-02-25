@@ -10,6 +10,7 @@ import os
 import face_recognition
 from PIL import Image
 from supabase import create_client, Client
+import smtplib
 
 KNOWN_FACES_DIR = "known_faces"
 load_dotenv()
@@ -23,6 +24,9 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+
+#targon api setup
+targonClient = OpenAI(base_url="https://api.targon.com/v1", api_key=os.getenv("TARGON_API_KEY"))
 
 chroma_client = chromadb.PersistentClient()
 collection_names = chroma_client.list_collections()
@@ -466,6 +470,92 @@ def add_email_update():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
+def send_email(receiver_email, messageUpdates):
+    # Configure these from environment variables in production
+    SENDER_EMAIL = "shreybirmiwal@gmail.com"
+    SENDER_PASSWORD = os.getenv("GOOGLE_APP_PASSWORD")
+    
+    subject = "Camera Updates Notification"
+
+    message = f"Updates: {messageUpdates}"
+
+
+    text = f"Subject: {subject}\n\n{message}"
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+        server.sendmail(SENDER_EMAIL, receiver_email, text)
+        print(f"Email sent to {receiver_email}")
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"Error sending email to {receiver_email}: {str(e)}")
+        return False
+    
+
+@app.route('/api/process_camera_updates', methods=['GET'])
+def process_camera_updates():
+    try:
+        # Get all unique camera IDs
+        camid_response = supabase.table("email_updates").select("camid").execute()
+        unique_camids = list({entry['camid'] for entry in camid_response.data})
+
+        for camid in unique_camids:
+            # Get updates for this camera (first entry with updates)
+            updates_response = supabase.table("email_updates") \
+                .select("updates") \
+                .eq("camid", camid) \
+                .not_.is_("updates", "null") \
+                .limit(1) \
+                .execute()
+
+            if not updates_response.data:
+                continue
+
+            updates = updates_response.data[0].get('updates')
+            
+
+            res = targonClient.chat.completions.create(
+                model="NousResearch/Hermes-3-Llama-3.1-8B",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": "Describe the updates for this camera in detail in consolodation. For example, make an email update that explains all the updates simply to a end user"},
+                            {"type": "text", "text": updates}
+                        ]
+                    }
+                ],
+                max_tokens=300
+            )
+
+            targon_consolidated = res.choices[0].message.content
+
+
+            # Get all emails for this camera
+            emails_response = supabase.table("email_updates") \
+                .select("email") \
+                .eq("camid", camid) \
+                .execute()
+
+            emails = [entry['email'] for entry in emails_response.data]
+
+            # Send emails
+            for email in emails:
+                send_email(email, targon_consolidated)
+
+        return jsonify({
+            "message": "Camera updates processed successfully",
+            "cameras_processed": len(unique_camids)
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
 
 
 
