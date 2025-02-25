@@ -5,10 +5,14 @@ import chromadb
 from chromadb.config import Settings
 import requests
 import base64
+from openai import OpenAI
+import os
+
 
 load_dotenv()
 app = Flask(__name__)
 client = OpenAI()
+perplexity_client = OpenAI(base_url="https://api.perplexity.ai", api_key = os.environ.get("PPLX_API_KEY"))
 
 chroma_client = chromadb.PersistentClient()
 collection_names = chroma_client.list_collections()
@@ -283,6 +287,40 @@ def add_camera():
     except Exception as e:
         print(f"Error adding camera: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+
+
+@app.route('/api/answer_query_face', methods=['POST'])
+def answer_query_face():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data received"}), 400
+        
+        cam_url = data.get('cam_url')
+
+        # CALL hyperbolic agent
+        hyper_answer = "Sreeram Kannan"
+
+        #call perplexity model to answer now
+        response = perplexity_client.chat.completions.create(
+            model="sonar-pro",
+            messages=[
+                {   
+                    "role": "user",
+                    "content": (
+                        f"NAME: {hyper_answer}. Given someones name, try to find details about them, such as age, profession, linkdin, twitter. Return with no extra words and include name , return in this format:\nNAME: Bob\nAGE: 22\nPROFESSION: Software Engineer\nLINKEDIN: https://linkedin.com/sreeram\nTWITTER: https://twitter.com/sreeram"
+                    ),
+                },
+            ],
+        )
+        print(response)
+        print(response.choices[0].message.content)
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
     
 if __name__ == '__main__':

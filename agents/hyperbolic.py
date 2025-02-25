@@ -18,3 +18,10 @@ response = requests.get(url, headers=headers)  # Change to requests.post(url, js
 # Print the response
 print(response.status_code)
 print(response.json())  # Use response.text if the response is not JSON
+
+
+
+
+# usage of docker container
+# replce images.jpeg with actual path to image
+#docker run --rm -v $(pwd)/images.jpeg:/app/input_image.jpg shreybirmiwal/face-detect:latest python face_recognition_script.py input_image.jpg

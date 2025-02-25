@@ -258,6 +258,21 @@ function App() {
 
   const face_search_frontend = async (cam) => {
     //replace with logic that queries agent and then gets camera image and then gets face
+
+    console.log("STARTING FACE SEARCH FRONTEND");
+
+    const response = await fetch('/api/face_search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cam_url: cam['image_url'] })
+    });
+
+    var data = await response.json();
+
+    console.log("RESPONSE DATA:", data);
+
+    return data;
+
     return {
       "name": "John Doe",
       "age": "25",
