@@ -58,19 +58,39 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
     }, [query_found_cam, autoOpenDone]);
 
     const CentralPopup = () => {
+        const [refreshTimestamp, setRefreshTimestamp] = useState(Date.now());
+
         if (!selectedCam) return null;
 
         return (
             <div className="fixed inset-0 flex items-center justify-center z-[1000] pointer-events-none" onClick={() => setSelectedCam(null)}>
                 <div className="bg-black border-2 border-green-500 w-3/4 h-3/4 flex relative pointer-events-auto p-2">
+                    {/* Refresh Button */}
+                    <button
+                        className="absolute top-2 left-2 text-green-500 hover:text-green-700"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setRefreshTimestamp(Date.now());
+                        }}
+                        title="Refresh Stream"
+                    >
+                        ↻
+                    </button>
+
+                    {/* Close Button */}
                     <button
                         className="absolute top-2 right-2 text-green-500 hover:text-green-700"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedCam(null);
+                        }}
                     >
                         X
                     </button>
+
                     <div className="w-1/2 border-r-2 border-green-500 p-4">
                         <img
-                            src={selectedCam.image_url}
+                            src={`${selectedCam.image_url}?ts=${refreshTimestamp}`}
                             alt="Camera feed"
                             className="w-full h-full object-contain"
                         />
