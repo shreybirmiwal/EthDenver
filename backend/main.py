@@ -295,12 +295,18 @@ def answer_query_face():
     try:
         data = request.get_json()
         if not data:
+            print("ERROR: No JSON data received")
             return jsonify({"error": "No JSON data received"}), 400
         
+
+        print("RECEIVED DATA:", data)  # Debugging log
         cam_url = data.get('cam_url')
+        print(cam_url)
 
         # CALL hyperbolic agent
         hyper_answer = "Sreeram Kannan"
+
+        print("HYPER ANSWER:", hyper_answer)
 
         #call perplexity model to answer now
         response = perplexity_client.chat.completions.create(
@@ -316,7 +322,8 @@ def answer_query_face():
         )
         print(response)
         print(response.choices[0].message.content)
-        return response.choices[0].message.content
+
+        return jsonify({"response": response.choices[0].message.content})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

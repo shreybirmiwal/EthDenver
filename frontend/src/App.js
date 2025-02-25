@@ -260,18 +260,19 @@ function App() {
     //replace with logic that queries agent and then gets camera image and then gets face
 
     console.log("STARTING FACE SEARCH FRONTEND");
+    console.log("cam url", cam['image_url']);
 
-    const response = await fetch('/api/face_search', {
+    const response = await fetch('/api/answer_query_face', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cam_url: cam['image_url'] })
+      body: JSON.stringify({ "cam_url": cam['image_url'] })
     });
 
     var data = await response.json();
 
     console.log("RESPONSE DATA:", data);
 
-    return data;
+    return data.response;
 
     return {
       "name": "John Doe",
@@ -357,9 +358,7 @@ function App() {
               animate={{ y: 0, opacity: 1 }}
               className="mt-8"
             >
-              <div className="text-2xl mb-6">
-                MAINFRAME ACCESS GRANTED
-              </div>
+
 
               <div className="flex items-center text-3xl">
                 <span className="mr-2">{'>'}</span>

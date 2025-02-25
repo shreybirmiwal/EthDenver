@@ -89,14 +89,8 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                             <div className="terminal-text">
                                 
                                 > QUERY RESULT:
-                                <br />
-                                Name: {query_found_res.name}
-                                <br />
-                                Age: {query_found_res.age}
-                                <br />
-                                Facebook: {query_found_res.facebook}
-                                <br />
-                                Linkedin: {query_found_res.linkedin}
+                                <br /> <br />
+                                {query_found_res}
 
                             </div>
 
