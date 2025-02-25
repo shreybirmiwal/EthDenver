@@ -19,7 +19,7 @@ router.post("/execute", async (req, res) => {
         var taskDefinitionId = Number(req.body.taskDefinitionId) || 0;
         console.log(`taskDefinitionId: ${taskDefinitionId}`);
 
-        var image_url = req.body.image_url || "https://example.com/image.jpg";
+        var image_url = "https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg";
         console.log(`image_url: ${image_url}`);
         //REPLACE IMAGE
 
@@ -44,9 +44,8 @@ router.post("/execute", async (req, res) => {
 
 
 
-        const result = await oracleService.getPrice("ETHUSDT");
-        result.price = req.body.fakePrice || result.price;
-        const cid = await dalService.publishJSONToIpfs(result);
+
+        const cid = await dalService.publishJSONToIpfs(res);
         const data = "hello";
         await dalService.sendTask(cid, data, taskDefinitionId);
         return res.status(200).send(new CustomResponse({ proofOfTask: cid, data: data, taskDefinitionId: taskDefinitionId }, "Task executed successfully"));
