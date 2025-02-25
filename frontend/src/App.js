@@ -346,7 +346,6 @@ function App() {
       }),
     });
 
-
     SetshowUpdatesPopup(false);
   }
 

@@ -417,7 +417,7 @@ def answer_query_face():
 
 
 
-def add_email_update(camID, email, updates=None):
+def add_email(camID, email, updates=None):
     """
     Adds an email update to the Supabase database.
 
@@ -430,15 +430,19 @@ def add_email_update(camID, email, updates=None):
         dict: Response from Supabase.
     """
     try:
+
+        print("Add email")
         # Insert data into the 'email_updates' table
         response = supabase.table("email_updates").insert({
-            "camID": camID,
+            "camid": camID,
             "email": email,
             "updates": updates
         }).execute()
 
+
         return {"message": "Email updated successfully", "data": response.data}
     except Exception as e:
+        print(f"Error adding email: {str(e)}")
         return {"error": str(e)}
     
 
@@ -450,8 +454,10 @@ def add_email_update():
         email = data['email']
         #updates = data.get('updates')  # Optional field
 
+
+        print("got data")
         # Call the Supabase function
-        result = add_email_update(camID, email)
+        result = add_email(camID, email)
 
         if "error" in result:
             raise Exception(result["error"])
@@ -459,6 +465,7 @@ def add_email_update():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
