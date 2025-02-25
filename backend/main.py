@@ -515,23 +515,24 @@ def process_camera_updates():
             if not updates_response.data:
                 continue
 
-            updates = updates_response.data[0].get('updates')
+            updates = str(updates_response.data[0].get('updates')) +""
+            print("UPDATES ", updates)
+
             
 
             res = targonClient.chat.completions.create(
                 model="NousResearch/Hermes-3-Llama-3.1-8B",
                 messages=[
+                    {"role": "system", "content": "Describe the updates for this camera in detail in consolodation. For example, make an email update that explains all the updates simply to a end user"},
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "text", "text": "Describe the updates for this camera in detail in consolodation. For example, make an email update that explains all the updates simply to a end user"},
-                            {"type": "text", "text": updates}
-                        ]
+                        "content": updates
                     }
                 ],
                 max_tokens=300
             )
 
+            print(res)
             targon_consolidated = res.choices[0].message.content
 
 
