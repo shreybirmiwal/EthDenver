@@ -9,12 +9,20 @@ from openai import OpenAI
 import os
 import face_recognition
 from PIL import Image
+from supabase import create_client, Client
 
 KNOWN_FACES_DIR = "known_faces"
 load_dotenv()
 app = Flask(__name__)
 client = OpenAI()
 perplexity_client = OpenAI(base_url="https://api.perplexity.ai", api_key = os.environ.get("PPLX_API_KEY"))
+
+
+#supabase
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+
 
 chroma_client = chromadb.PersistentClient()
 collection_names = chroma_client.list_collections()
@@ -405,6 +413,52 @@ def answer_query_face():
     except Exception as e:
         print(f"ERROR: {e}")
         return jsonify({'error': str(e)}), 500
+    
+
+
+
+def add_email_update(camID, email, updates=None):
+    """
+    Adds an email update to the Supabase database.
+
+    Args:
+        camID (str): The camera ID.
+        email (str): The email address to associate with the camID.
+        updates (str, optional): Additional update information. Defaults to None.
+
+    Returns:
+        dict: Response from Supabase.
+    """
+    try:
+        # Insert data into the 'email_updates' table
+        response = supabase.table("email_updates").insert({
+            "camID": camID,
+            "email": email,
+            "updates": updates
+        }).execute()
+
+        return {"message": "Email updated successfully", "data": response.data}
+    except Exception as e:
+        return {"error": str(e)}
+    
+
+@app.route('/api/add_email_update', methods=['POST'])
+def add_email_update():
+    try:
+        data = request.json
+        camID = data['camID']
+        email = data['email']
+        #updates = data.get('updates')  # Optional field
+
+        # Call the Supabase function
+        result = add_email_update(camID, email)
+
+        if "error" in result:
+            raise Exception(result["error"])
+
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
