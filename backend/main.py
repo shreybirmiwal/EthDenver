@@ -7,8 +7,10 @@ import requests
 import base64
 from openai import OpenAI
 import os
+import face_recognition
+from PIL import Image
 
-
+KNOWN_FACES_DIR = "known_faces"
 load_dotenv()
 app = Flask(__name__)
 client = OpenAI()
@@ -290,6 +292,60 @@ def add_camera():
 
 
 
+def download_image(image_url):
+    """Downloads an image from a URL and saves it locally."""
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    
+    try:
+        response = requests.get(image_url, headers=headers, stream=True, allow_redirects=True)
+        response.raise_for_status()  # Raise error if request fails
+        
+        image_path = "input_image.jpg"
+        with open(image_path, "wb") as f:
+            for chunk in response.iter_content(1024):
+                f.write(chunk)
+        return image_path
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading image: {e}")
+        return None
+
+def encode_known_faces():
+    """Encodes all known faces and returns a dictionary {name: encoding}."""
+    known_encodings = {}
+    
+    for filename in os.listdir(KNOWN_FACES_DIR):
+        filepath = os.path.join(KNOWN_FACES_DIR, filename)
+        if not filename.endswith(('.jpg', '.jpeg', '.png')):
+            continue
+        
+        name = os.path.splitext(filename)[0]  # Extract name from filename
+        image = face_recognition.load_image_file(filepath)
+        encodings = face_recognition.face_encodings(image)
+
+        if encodings:
+            known_encodings[name] = encodings[0]
+    
+    return known_encodings
+
+def recognize_faces(image_path, known_encodings):
+    """Compares an input image with known faces and returns the closest match."""
+    unknown_image = face_recognition.load_image_file(image_path)
+    unknown_encodings = face_recognition.face_encodings(unknown_image)
+
+    if not unknown_encodings:
+        return None  # No face detected in the input image.
+
+    unknown_encoding = unknown_encodings[0]
+    
+    for name, known_encoding in known_encodings.items():
+        match = face_recognition.compare_faces([known_encoding], unknown_encoding, tolerance=0.6)
+        if match[0]:
+            return name  # Match found
+    
+    return None  # No match found.
+
 @app.route('/api/answer_query_face', methods=['POST'])
 def answer_query_face():
     try:
@@ -298,37 +354,57 @@ def answer_query_face():
             print("ERROR: No JSON data received")
             return jsonify({"error": "No JSON data received"}), 400
         
-
         print("RECEIVED DATA:", data)  # Debugging log
         cam_url = data.get('cam_url')
-        print(cam_url)
+        
+        if not cam_url:
+            print("ERROR: No cam_url provided")
+            return jsonify({"error": "No cam_url provided"}), 400
+        
+        # Step 1: Download the image from the URL
+        print("Downloading image from URL...")
+        image_path = download_image(cam_url)
+        
+        if not image_path:
+            return jsonify({"error": "Failed to download image from URL"}), 500
+        
+        # Step 2: Encode known faces
+        print("Encoding known faces...")
+        known_faces = encode_known_faces()
+        
+        # Step 3: Recognize faces in the downloaded image
+        print("Recognizing faces...")
+        recognized_name = recognize_faces(image_path, known_faces)
+        
+        if not recognized_name:
+            recognized_name = "Unknown"  # Default value if no match is found
+        
+        print("HYPER ANSWER:", recognized_name)
 
-        # CALL hyperbolic agent
-        hyper_answer = "Sreeram Kannan"
-
-        print("HYPER ANSWER:", hyper_answer)
-
-        #call perplexity model to answer now
+        # Step 4: Call Perplexity model to get additional information about the person
         response = perplexity_client.chat.completions.create(
             model="sonar-pro",
             messages=[
                 {   
                     "role": "user",
                     "content": (
-                        f"NAME: {hyper_answer}. Given someones name, try to find details about them, such as age, profession, linkdin, twitter. Return with no extra words and include name , return in this format:\nNAME: Bob\nAGE: 22\nPROFESSION: Software Engineer\nLINKEDIN: https://linkedin.com/sreeram\nTWITTER: https://twitter.com/sreeram"
+                        f"NAME: {recognized_name}. Given someone's name, try to find details about them, such as age, profession, LinkedIn, Twitter. Return with no extra words and include name. If you cannot find information, just return CANNOT FiND for each field. Return in this format:\nNAME: Bob\nAGE: 22\nPROFESSION: Software Engineer\nLINKEDIN: https://linkedin.com/bob\nTWITTER: https://twitter.com/bob"
                     ),
                 },
             ],
         )
+        
         print(response)
-        print(response.choices[0].message.content)
+        
+        # Extract and return the response content
+        result_content = response.choices[0].message.content
+        print(result_content)
 
-        return jsonify({"response": response.choices[0].message.content})
+        return jsonify({"response": result_content})
 
     except Exception as e:
+        print(f"ERROR: {e}")
         return jsonify({'error': str(e)}), 500
 
-
-    
 if __name__ == '__main__':
     app.run(debug=True)
