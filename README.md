@@ -16,3 +16,6 @@ todo
 2) AVS
 3) story protocol
 4) 
+
+
+bounding box on ppl/objects would be tuff
