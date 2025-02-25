@@ -82,6 +82,12 @@ function App() {
   const [currentBootStep, setCurrentBootStep] = useState(0);
 
 
+  //email updates part
+  const [showUpdatesPopup, SetshowUpdatesPopup] = useState(false);
+  const [newCamEmail, setNewCamEmail] = useState("");
+  const [newCamID, setNewCamID] = useState("");
+
+
 
   ///MAP STUFF
   /// Modified MAP STUFF
@@ -328,6 +334,22 @@ function App() {
     setShowPopup(false);
   };
 
+  const addNewEmailUpdate = async () => {
+    console.log("Adding new email update:", newCamID, newCamEmail);
+
+    await fetch("/api/add_email_update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        camID: newCamID,
+        email: newCamEmail,
+      }),
+    });
+
+
+    SetshowUpdatesPopup(false);
+  }
+
   if (state === 'home' || state === 'loading') {
     return (
       <div className="h-screen bg-black overflow-hidden font-mono">
@@ -388,6 +410,12 @@ function App() {
             >
               [OPEN-MAP]
             </button>
+            <button
+              onClick={() => SetshowUpdatesPopup(true)}
+              className=" text-green-500 hover:text-green-400 underline underline-offset-4 decoration-dashed"
+            >
+              [GET-UPDATES]
+            </button>
           </div>
 
 
@@ -427,6 +455,38 @@ function App() {
                   </button>
                   <button
                     onClick={addNewCamera}
+                    className="text-green-500 hover:text-green-400 border border-green-500 px-4 py-2"
+                  >
+                    [COMMIT]
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showUpdatesPopup && (
+            <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+              <div className="bg-black p-8 border-2 border-green-500 w-[500px] shadow-glow">
+                <div className="text-lg mb-4">[GET UPDATES]</div>
+                <TerminalInput
+                  label="CAM-ID"
+                  value={newCamID}
+                  onChange={(e) => setNewCamID(e.target.value)}
+                />
+                <TerminalInput
+                  label="EMAIL TO RECIEVE UPDATES"
+                  value={newCamEmail}
+                  onChange={(e) => setNewCamEmail(e.target.value)}
+                />
+                <div className="flex gap-4 mt-6">
+                  <button
+                    onClick={() => SetshowUpdatesPopup(false)}
+                    className="text-red-500 hover:text-red-400 border border-red-500 px-4 py-2"
+                  >
+                    [ABORT]
+                  </button>
+                  <button
+                    onClick={addNewEmailUpdate}
                     className="text-green-500 hover:text-green-400 border border-green-500 px-4 py-2"
                   >
                     [COMMIT]
