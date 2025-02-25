@@ -4,7 +4,8 @@ FROM python:3.9
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
-    libglib2.0-0 && \
+    libglib2.0-0 \
+    cmake && \
     pip install --no-cache-dir face_recognition requests pillow
 
 # Set the working directory in the container

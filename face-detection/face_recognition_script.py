@@ -3,21 +3,28 @@ import os
 import requests
 import face_recognition
 from PIL import Image
+from urllib.parse import urlparse
 
 # Directory containing known faces
 KNOWN_FACES_DIR = "known_faces"
 
 def download_image(image_url):
     """Downloads an image from a URL and saves it locally."""
-    response = requests.get(image_url, stream=True)
-    if response.status_code == 200:
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    
+    try:
+        response = requests.get(image_url, headers=headers, stream=True, allow_redirects=True)
+        response.raise_for_status()  # Raise error if request fails
+        
         image_path = "input_image.jpg"
         with open(image_path, "wb") as f:
             for chunk in response.iter_content(1024):
                 f.write(chunk)
         return image_path
-    else:
-        print("Error: Unable to download image.")
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading image: {e}")
         return None
 
 def encode_known_faces():
@@ -55,13 +62,27 @@ def recognize_faces(image_path, known_encodings):
     
     return "No match found."
 
+def is_url(string):
+    """Checks if the input string is a URL."""
+    parsed = urlparse(string)
+    return bool(parsed.netloc) and bool(parsed.scheme)
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python face_recognition_script.py <image_url>")
+        print("Usage: python face_recognition_script.py <image_path_or_url>")
         sys.exit(1)
 
-    image_url = sys.argv[1]
-    image_path = download_image(image_url)
+    input_source = sys.argv[1]
+
+    if is_url(input_source):
+        print("Downloading image from URL...")
+        image_path = download_image(input_source)
+    elif os.path.exists(input_source):
+        print("Using local image file...")
+        image_path = input_source
+    else:
+        print("Error: Invalid image source (not a valid file or URL).")
+        sys.exit(1)
 
     if image_path:
         known_faces = encode_known_faces()
