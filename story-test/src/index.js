@@ -3,28 +3,29 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {
-  DynamicContextProvider,
-  DynamicWidget,
-} from "@dynamic-labs/sdk-react-core";
-import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+
+
+
+// import {
+//   DynamicContextProvider,
+//   DynamicWidget,
+// } from "@dynamic-labs/sdk-react-core";
+// import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <DynamicContextProvider
-    settings={{
-      // Find your environment id at https://app.dynamic.xyz/dashboard/developer
-      environmentId: "0ca24247-9679-4abc-8963-bb5f36ad358b",
-      walletConnectors: [EthereumWalletConnectors],
-    }}
-  >
-    <React.StrictMode>
-      <DynamicWidget />
+  // <DynamicContextProvider
+  //   settings={{
+  //     // Find your environment id at https://app.dynamic.xyz/dashboard/developer
+  //     environmentId: "0ca24247-9679-4abc-8963-bb5f36ad358b",
+  //     walletConnectors: [EthereumWalletConnectors],
+  //   }}
+  // >
+  <React.StrictMode>
 
-      <App />
-    </React.StrictMode>
-  </DynamicContextProvider>
+    <App />
+  </React.StrictMode>
 
 );
 
