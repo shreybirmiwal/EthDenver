@@ -361,15 +361,15 @@ function App() {
     SetshowUpdatesPopup(false);
   }
 
-  return (
-    <div>
+  // return (
+  //   <div>
 
-      <DynamicWidget />
-      <AccountInfo />
-      <TestComponent />
+  //     <DynamicWidget />
+  //     <AccountInfo />
+  //     <TestComponent />
 
-    </div>
-  )
+  //   </div>
+  // )
   if (state === 'home' || state === 'loading') {
     return (
       <div className="h-screen bg-black overflow-hidden font-mono">

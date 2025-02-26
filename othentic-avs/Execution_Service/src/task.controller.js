@@ -37,9 +37,9 @@ router.post("/execute", async (req, res) => {
                 }),
             }
         );
-        const res = await response.json();
+        const res_me = await response.json();
         console.log("########")
-        console.log(res);
+        console.log(res_me);
         console.log("########")
 
 
