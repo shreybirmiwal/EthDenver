@@ -7,6 +7,18 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import CyberMap from './CyberMap';
 
+import {
+  DynamicContextProvider,
+  DynamicWidget,
+} from '@dynamic-labs/sdk-react-core';
+import {
+  createConfig,
+  WagmiProvider,
+  useAccount,
+} from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import TestComponent from './TestComponent';
+
 
 const TerminalInput = ({ label, value, onChange, placeholder }) => (
   <div className="mb-4">
@@ -349,12 +361,22 @@ function App() {
     SetshowUpdatesPopup(false);
   }
 
+  // return (
+  //   <div>
+
+  //     <DynamicWidget />
+  //     <AccountInfo />
+  //     <TestComponent />
+
+  //   </div>
+  // )
   if (state === 'home' || state === 'loading') {
     return (
       <div className="h-screen bg-black overflow-hidden font-mono">
         <div className="crt-screen fixed inset-0 pointer-events-none"></div>
 
         <div className="relative h-full text-green-500 p-8 overflow-y-auto" style={{ height: 'calc(100vh - 4rem)' }}>
+          <DynamicWidget />
           {bootSequence.slice(0, currentBootStep).map((line, idx) => (
             <motion.div
               key={idx}
@@ -545,3 +567,17 @@ function App() {
 }
 
 export default App;
+
+function AccountInfo() {
+  const { address, isConnected, chain } = useAccount();
+
+  return (
+    <div>
+      <p>
+        wagmi connected: {isConnected ? 'true' : 'false'}
+      </p>
+      <p>wagmi address: {address}</p>
+      <p>wagmi network: {chain?.id}</p>
+    </div>
+  );
+};

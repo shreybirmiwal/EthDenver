@@ -2,10 +2,10 @@ require('dotenv').config();
 const pinataSDK = require("@pinata/sdk");
 const { ethers, AbiCoder } = require('ethers');
 
-var pinataApiKey='';
-var pinataSecretApiKey='';
-var rpcBaseAddress='';
-var privateKey='';
+var pinataApiKey = '';
+var pinataSecretApiKey = '';
+var rpcBaseAddress = '';
+var privateKey = '';
 
 
 
@@ -18,8 +18,11 @@ function init() {
 
 async function sendTask(proofOfTask, data, taskDefinitionId) {
 
+  console.log(privateKey);
   var wallet = new ethers.Wallet(privateKey);
+  console.log(wallet.address);
   var performerAddress = wallet.address;
+  console.log(performerAddress);
 
   data = ethers.hexlify(ethers.toUtf8Bytes(data));
   const message = ethers.AbiCoder.defaultAbiCoder().encode(["string", "bytes", "address", "uint16"], [proofOfTask, data, performerAddress, taskDefinitionId]);
@@ -37,24 +40,24 @@ async function sendTask(proofOfTask, data, taskDefinitionId) {
       sig,
     ]
   };
-    try {
-      const provider = new ethers.JsonRpcProvider(rpcBaseAddress);
-      const response = await provider.send(jsonRpcBody.method, jsonRpcBody.params);
-      console.log("API response:", response);
+  try {
+    const provider = new ethers.JsonRpcProvider(rpcBaseAddress);
+    const response = await provider.send(jsonRpcBody.method, jsonRpcBody.params);
+    console.log("API response:", response);
   } catch (error) {
-      console.error("Error making API request:", error);
+    console.error("Error making API request:", error);
   }
 }
 
 async function publishJSONToIpfs(data) {
   var proofOfTask = '';
-  try {   
+  try {
     const pinata = new pinataSDK(pinataApiKey, pinataSecretApiKey);
     const response = await pinata.pinJSONToIPFS(data);
     proofOfTask = response.IpfsHash;
     console.log(`proofOfTask: ${proofOfTask}`);
   }
-  catch (error) {  
+  catch (error) {
     console.error("Error making API request to pinataSDK:", error);
   }
   return proofOfTask;
