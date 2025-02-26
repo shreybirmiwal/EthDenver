@@ -24,13 +24,13 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "mint-and-register": "npx ts-node ./story-scripts/simpleMintAndRegister.ts",
-    "mint-and-register-spg": "npx ts-node ./story-scripts/simpleMintAndRegisterSpg.ts",
-    "register-deriv-non-com": "npx ts-node ./story-scripts/registerDerivativeNonCommercial.ts",
-    "register-deriv-com": "npx ts-node ./story-scripts/registerDerivativeCommercial.ts",
-    "register-deriv-com-spg": "npx ts-node ./story-scripts/registerDerivativeCommercialSpg.ts",
-    "dispute-ip": "npx ts-node ./story-scripts/disputeIp.ts",
-    "create-spg-collection": "npx ts-node ./story-scripts/utils/createSpgNftCollection.ts"
+    "mint-and-register": "npx ts-node ./src/lib/simpleMintAndRegister.ts",
+    "mint-and-register-spg": "npx ts-node ./src/lib/simpleMintAndRegisterSpg.ts",
+    "register-deriv-non-com": "npx ts-node ./src/lib/registerDerivativeNonCommercial.ts",
+    "register-deriv-com": "npx ts-node ./src/lib/registerDerivativeCommercial.ts",
+    "register-deriv-com-spg": "npx ts-node ./src/lib/registerDerivativeCommercialSpg.ts",
+    "dispute-ip": "npx ts-node ./src/lib/disputeIp.ts",
+    "create-spg-collection": "npx ts-node ./src/lib/utils/createSpgNftCollection.ts"
   },
   "eslintConfig": {
     "extends": [

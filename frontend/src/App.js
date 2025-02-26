@@ -307,6 +307,7 @@ function App() {
         image_url: newCamUrl,
         description: newCamDesc,
         walletID: newCamWalletID,
+        
       }),
     });
     setShowPopup(false);
