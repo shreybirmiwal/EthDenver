@@ -16,6 +16,7 @@ router.post("/execute", async (req, res) => {
     console.log("Executing task");
 
     try {
+        cons
         var taskDefinitionId = Number(req.body.taskDefinitionId) || 0;
         console.log(`taskDefinitionId: ${taskDefinitionId}`);
 
@@ -33,7 +34,7 @@ router.post("/execute", async (req, res) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    image: { image_url }
+                    image: "https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg"
                 }),
             }
         );

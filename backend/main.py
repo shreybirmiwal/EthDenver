@@ -516,37 +516,52 @@ def process_camera_updates():
                 continue
 
             updates = str(updates_response.data[0].get('updates')) +""
-            print("UPDATES ", updates)
+            #print("UPDATES ", updates)
 
             
-
+            print("starting apiu call")
             res = targonClient.chat.completions.create(
-                model="NousResearch/Hermes-3-Llama-3.1-8B",
+                model="nvidia/Llama-3.1-Nemotron-70B-Instruct-HF",
+                stream=True,
                 messages=[
-                    {"role": "system", "content": "Describe the updates for this camera in detail in consolodation. For example, make an email update that explains all the updates simply to a end user"},
+                    {"role": "system", "content": "You are looking at the text description of what is happening at each frame of a security camera. Describe the updates for this camera in detail in consolodation. For example, make an email update that explains all the updates simply to a end user explaining what happened on their camera "},
                     {
                         "role": "user",
                         "content": updates
                     }
                 ],
-                max_tokens=300
             )
 
-            print(res)
-            targon_consolidated = res.choices[0].message.content
+            #print(res)
 
+            res2 = ""
+            for chunk in res:
+                if not len(chunk.choices):
+                    continue
+                if chunk.choices[0].delta.content is not None:
+                    print(chunk.choices[0].delta.content)
+                    res2+=chunk.choices[0].delta.content
+
+            targon_consolidated = res2
+
+            print("output ", targon_consolidated)
 
             # Get all emails for this camera
             emails_response = supabase.table("email_updates") \
                 .select("email") \
                 .eq("camid", camid) \
                 .execute()
+            
+
 
             emails = [entry['email'] for entry in emails_response.data]
+
+            print("all emails", emails)
 
             # Send emails
             for email in emails:
                 send_email(email, targon_consolidated)
+                print("SENT EMAIL" , email)
 
         return jsonify({
             "message": "Camera updates processed successfully",
