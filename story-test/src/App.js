@@ -15,6 +15,7 @@ import { http } from 'viem';
 import { mainnet } from 'viem/chains';
 import React from 'react';
 
+import TestComponent from './TestComponent';
 
 const config = createConfig({
   chains: [mainnet],
@@ -55,6 +56,9 @@ function App() {
               <DynamicWidget />
               <AccountInfo />
               hi
+
+              <TestComponent />
+
             </DynamicWagmiConnector>
           </QueryClientProvider>
         </WagmiProvider>
