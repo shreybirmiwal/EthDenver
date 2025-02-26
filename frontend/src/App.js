@@ -376,6 +376,7 @@ function App() {
         <div className="crt-screen fixed inset-0 pointer-events-none"></div>
 
         <div className="relative h-full text-green-500 p-8 overflow-y-auto" style={{ height: 'calc(100vh - 4rem)' }}>
+          <DynamicWidget />
           {bootSequence.slice(0, currentBootStep).map((line, idx) => (
             <motion.div
               key={idx}

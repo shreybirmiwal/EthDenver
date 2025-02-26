@@ -16,7 +16,6 @@ router.post("/execute", async (req, res) => {
     console.log("Executing task");
 
     try {
-        cons
         var taskDefinitionId = Number(req.body.taskDefinitionId) || 0;
         console.log(`taskDefinitionId: ${taskDefinitionId}`);
 
