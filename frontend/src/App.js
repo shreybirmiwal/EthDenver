@@ -17,6 +17,8 @@ import {
   useAccount,
 } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import TestComponent from './TestComponent';
+
 
 const TerminalInput = ({ label, value, onChange, placeholder }) => (
   <div className="mb-4">
@@ -359,13 +361,19 @@ function App() {
     SetshowUpdatesPopup(false);
   }
 
+  return (
+    <div>
+
+      <DynamicWidget />
+      <AccountInfo />
+      <TestComponent />
+
+    </div>
+  )
   if (state === 'home' || state === 'loading') {
     return (
       <div className="h-screen bg-black overflow-hidden font-mono">
         <div className="crt-screen fixed inset-0 pointer-events-none"></div>
-
-        <DynamicWidget />
-        <AccountInfo />
 
         <div className="relative h-full text-green-500 p-8 overflow-y-auto" style={{ height: 'calc(100vh - 4rem)' }}>
           {bootSequence.slice(0, currentBootStep).map((line, idx) => (
