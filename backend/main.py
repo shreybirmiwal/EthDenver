@@ -274,7 +274,7 @@ def answer_query_no_face():
 def add_camera():
     try:
         data = request.json
-        required_fields = ["uid", "location", "image_url", "description", 'walletID']
+        required_fields = ["uid", "location", "image_url", "description", "txHash", "ipId", "tokenId"]
         if any(field not in data for field in required_fields):
             return jsonify({'error': 'Missing fields in request'}), 400
 
@@ -290,9 +290,10 @@ def add_camera():
             metadatas=[{
                 "location": data['location'],
                 "image_url": data['image_url'],
-                "description": data['description'] + image_frame_description,
-                "walletID": data['walletID']
-            
+                "description": data['description'] + image_frame_description,            
+                "txHash": data['txHash'],
+                "ipId": data['ipId'],
+                "tokenId": data['tokenId']
             }],
             ids=[data['uid']],
             embeddings=[embedding]
