@@ -28,13 +28,7 @@ bounding box on ppl/objects would be tuff
 
 make sure to fix hardcoded location options in backend main,.py
 
-
-![Autonomously Verified Service (Othentic + EigenLayer)-3](https://github.com/user-attachments/assets/14603b79-e95f-4c67-b6c5-bc9609e9d557)
-
-
-Title
-
-Logo
+![unagi logo](https://github.com/user-attachments/assets/b0d63934-af12-4221-a9bd-83a5d446f6e8)
 
 Unagi, also known as a state of total awareness (add link), DePIN network of autonomously verified cameras that allow agents to access the real world in real time.
 
