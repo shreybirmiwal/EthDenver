@@ -14,7 +14,7 @@ async function getIPfsTask(cid) {
 
   return {
     "isAI": data.isAI,
-    "image_url": data.image_url_sent
+    "image_url": data.image_url
   };
 }
 

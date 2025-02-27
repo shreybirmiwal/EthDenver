@@ -1,5 +1,5 @@
 "use strict";
-const { Router } = require("express")
+const { Router, json } = require("express")
 const CustomError = require("./utils/validateError");
 const CustomResponse = require("./utils/validateResponse");
 const dalService = require("./dal.service");
@@ -42,15 +42,18 @@ router.post("/execute", async (req, res) => {
         console.log("EXECUTION########")
         // end camera verification
 
-        const cid = await dalService.publishJSONToIpfs(res_me);
-        console.log("*before sending: image url", image_url)
-        const data = JSON.stringify({
+        const temp_data = {
             "isAI": res_me.isAI,
-            "image_url_sent": image_url
-        })
-        console.log("*before sending data", data)
+            "image_url": image_url
+        }
 
-        await dalService.sendTask(cid, data, taskDefinitionId);
+        const cid = await dalService.publishJSONToIpfs(temp_data);
+        // console.log("*before sending: image url", image_url)
+        // console.log("*before sending data", data)
+
+        const stringifiedData = JSON.stringify(temp_data);
+
+        await dalService.sendTask(cid, stringifiedData, taskDefinitionId);
         return res.status(200).send(new CustomResponse({ proofOfTask: cid, data: data, taskDefinitionId: taskDefinitionId }, "Task executed successfully"));
     } catch (error) {
         console.log(error)
