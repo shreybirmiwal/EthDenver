@@ -251,6 +251,7 @@ function App() {
   //load data forr map
   useEffect(() => {
     const fetchData = async () => {
+      console.log('trying to fetch cam data')
       try {
         const response = await fetch('/api/get_all_cameras', {
           method: 'GET',
