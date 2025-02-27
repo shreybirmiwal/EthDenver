@@ -89,6 +89,10 @@ Future:
 
 Feedback:
 
+docker compose super super helpful
+easier to add data / pass data in
+and then also moe documentaiton on getting the final data ansewer
+
 ## Targon
 The Targon implementation allowed us to identify significant changes between frames and flag them in a consolidated surveillance report, allowing for users signed up for that camera to be notified of suspicious activity.
 

@@ -2,7 +2,6 @@
 const { Router } = require("express")
 const CustomError = require("./utils/validateError");
 const CustomResponse = require("./utils/validateResponse");
-const oracleService = require("./oracle.service");
 const dalService = require("./dal.service");
 
 const router = Router()
@@ -32,14 +31,14 @@ router.post("/execute", async (req, res) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    image: "https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg"
+                    image: image_url
                 }),
             }
         );
         const res_me = await response.json();
-        console.log("########")
+        console.log("EXECUTIONER ########")
         console.log(res_me);
-        console.log("########")
+        console.log("EXECUTION########")
         // end camera verification
 
         const cid = await dalService.publishJSONToIpfs(res_me);
