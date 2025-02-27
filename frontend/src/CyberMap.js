@@ -55,6 +55,8 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
         });
     }
 
+
+
     async function PayRoyalty(receiverIpId) {
         console.log("Paying royalty to reciever IP ID", receiverIpId);
         try {
@@ -120,6 +122,20 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
         return null;
     }
 
+    const callAgent = async (cam) => {
+
+        const response = await fetch('/api/callAgent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "cam": cam })
+        });
+
+        const data = await response.json();
+
+        console.log("call agent returned data ", data)
+
+    }
+
     useEffect(() => {
         if (query_found_cam?.location && !autoOpenDone) {
             try {
@@ -138,6 +154,8 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
             }
         }
     }, [query_found_cam, autoOpenDone]);
+
+
 
     const CentralPopup = () => {
         const [refreshTimestamp, setRefreshTimestamp] = useState(Date.now());
@@ -206,6 +224,10 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
 
                         <div className="terminal-text border-t-2 border-red-500 pt-2" onClick={() => disputeIP(selectedCam.ipId, selectedCam.uid)}>
                             > DISPUTE (this is my camera!)
+                        </div>
+
+                        <div className="terminal-text border-t-2 border-green-500 pt-2" onClick={() => callAgent(selectedCam)}>
+                            > INSURANCE AGENT
                         </div>
 
                     </div>

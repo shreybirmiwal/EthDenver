@@ -574,6 +574,45 @@ def process_camera_updates():
     
 
 
+import os
+import requests
+from flask import request, jsonify
+from dotenv import load_dotenv
+
+load_dotenv()
+
+@app.route('/api/callAgent', methods=['POST'])
+def call_agent():
+    try:
+        print("Call agent called in backedn")
+        data = request.json
+        cam = data['cam']
+        
+        imageDesc = getImage_Description(cam['image_url'])
+
+        print("got descri of cam", imageDesc)
+        
+        # Call external API
+        api_url = 'https://autonome.alt.technology/cdptest-fuvmye/chat'
+        api_auth = os.getenv('API_AUTH_AUTONOME')
+        
+        headers = {
+            'Authorization': f'Basic {api_auth}',
+            'Content-Type': 'application/json'
+        }
+        
+        payload = {"message": "Here is a description of our agent" + imageDesc}
+        
+        response = requests.post(api_url, json=payload, headers=headers)
+        response.raise_for_status()
+        
+        return jsonify(response.json()), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    
+
 
 
 if __name__ == '__main__':
