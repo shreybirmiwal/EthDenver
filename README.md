@@ -28,32 +28,32 @@ Unagi, also known as a state of total awareness ([add link](https://www.youtube.
 
 # Demo Video
 
-Protocol Bounties:
+# Protocol Bounties:
 
-# Autonome
+## Autonome
 We utilized autonome to host our Coinbase Developer Platform (CDP) agentKit agent. After deploying this agent, we called the Autonome API and prompted our agent to mint an NFT ...
 Future: one future implementation would be to deploy our own agent framework that does CDP SDK + AgentKit, which would allow us to execute smart contracts
 Feedback: Hyperbolic agent had some issues working until the dev team launched a v2. Implementing autonome into our code was also quite challenging as the curl commands weren't working.
 
-# Story Protocol
+## Story Protocol
 Story Protocol was crucial in creating the incentive structure for camera providers. When a provider uploads their livestream, our application mints the imageURL as an NFT and registers it as an IPA. The camera provider is then paid a royalty every time a user queries that camera, incentivizing providers to be a part of the network.
 
-# Othentic
+## Othentic
 Othentic was used to verify that each livestream is genuine by pushing the verified data onchain using EigenLayer's restaking security model.
 Future:
 Feedback:
 
-## Installation
-# React Web App
+# Installation
+## React Web App
 cd frontend
 npm install --legacy-peer-deps
 npm start
 
-# Flask backend
+## Flask backend
 cd backend
 py flask_server.py
 
-# Livestream
+## Livestream
 1. Run docker desktop
 2. docker run --rm -it -p 8554:8554 aler9/rtsp-simple-server
 3. #ffmpeg -re -stream_loop -1 -i {insert_mp4_file} -rtsp_transport tcp -c copy -f rtsp rtsp://localhost:8554/mystream
