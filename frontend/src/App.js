@@ -475,8 +475,8 @@ function App() {
 
 
     //verify camera legitness
-    const data = await verify_camera_avs(newCamUrl)
-
+    const verified_cam_data = await verify_camera_avs(newCamUrl)
+    console.log("VERIFIED CAM ON CHAIN ", verified_cam_data)
 
     // do story protocol
     var data = await registerIpWithRoyalties(newCamUrl, newCamDesc);
