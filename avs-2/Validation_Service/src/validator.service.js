@@ -7,7 +7,11 @@ async function validate(proofOfTask) {
     const token = process.env.BITMINDKEY;
     const taskResult = await dalService.getIPfsTask(proofOfTask);
 
-    var image_url = "https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg";
+    console.log("received task result", taskResult);
+
+    console.log("recievied image url", taskResult.image_url)
+
+    var image_url = taskResult.image_url
     console.log(`image_url: ${image_url}`);
     //REPLACE IMAGE
 
@@ -30,6 +34,8 @@ async function validate(proofOfTask) {
     console.log(res_me);
     console.log("VALIDATOR ########")
 
+    console.log(" validator testing results isAi?", res_me.isAI)
+    console.log("miner results: ", taskResult.isAI)
 
     let isApproved = true
 

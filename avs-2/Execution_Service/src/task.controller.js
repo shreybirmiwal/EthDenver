@@ -16,8 +16,9 @@ router.post("/execute", async (req, res) => {
         var taskDefinitionId = Number(req.body.taskDefinitionId) || 0;
         console.log(`taskDefinitionId: ${taskDefinitionId}`);
 
+
         // get camera verification
-        var image_url = "https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg";
+        var image_url = req.body.image_url;
         console.log(`image_url: ${image_url}`);
         //REPLACE IMAGE
 
@@ -42,7 +43,13 @@ router.post("/execute", async (req, res) => {
         // end camera verification
 
         const cid = await dalService.publishJSONToIpfs(res_me);
-        const data = "hello";
+        console.log("*before sending: image url", image_url)
+        const data = JSON.stringify({
+            "isAI": res_me.isAI,
+            "image_url_sent": image_url
+        })
+        console.log("*before sending data", data)
+
         await dalService.sendTask(cid, data, taskDefinitionId);
         return res.status(200).send(new CustomResponse({ proofOfTask: cid, data: data, taskDefinitionId: taskDefinitionId }, "Task executed successfully"));
     } catch (error) {

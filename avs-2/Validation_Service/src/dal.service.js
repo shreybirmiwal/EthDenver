@@ -1,7 +1,7 @@
 require('dotenv').config();
 const axios = require("axios");
 
-var ipfsHost='';
+var ipfsHost = '';
 
 function init() {
   ipfsHost = process.env.IPFS_HOST;
@@ -9,13 +9,16 @@ function init() {
 
 
 async function getIPfsTask(cid) {
-    const { data } = await axios.get(ipfsHost + cid);
-    return {
-      symbol: data.symbol,
-      price: parseFloat(data.price),
-    };
-  }  
-  
+  const { data } = await axios.get(ipfsHost + cid);
+  console.log("*recieved data ", data)
+
+  return {
+    "isAI": data.isAI,
+    "image_url": data.image_url_sent
+  };
+}
+
+
 module.exports = {
   init,
   getIPfsTask
