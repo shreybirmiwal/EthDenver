@@ -1,15 +1,17 @@
 import requests
 
 # Define the URL and headers
-url = "https://autonome.alt.technology/hyper-lqlrtj"
+url = "https://autonome.alt.technology/hyper3-rwoegw"
 headers = {
-    "Authorization": "Basic aHlwZXI6eHZxaUpVdENTbQ==",
+    "Authorization": "Authorization: Basic aHlwZXIzOkR3TW1MQ2dBY2g=",
     "Content-Type": "application/json"  # Adjust if needed
 }
 
+
+
 # Optional: Define the payload if the API requires a request body
 data = {
-    "message": "Hello, Hyperbolic Agent!"  # Adjust based on API requirements
+    "message": f""
 }
 
 # Make the GET or POST request (modify as needed)

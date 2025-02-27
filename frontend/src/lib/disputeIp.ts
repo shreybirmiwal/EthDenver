@@ -31,7 +31,28 @@ const main = async function () {
         targetIpId: ipResponse.ipId as Address,
         // NOTE: you must use your own CID here, because every time it is used,
         // the protocol does not allow you to use it again
-        cid: 'QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR',
+        cid: 'bafkreidr4cygbvw3oy6d7cf4iwz5lj4fqfejnuhcp4tdr2lcpqrqcadcmu',
+        //eventually replace this cid code with 
+        /**
+     *   try {
+            const response = await axios.post(url, data, {
+            maxContentLength: Infinity,
+            headers: {
+                ...data.getHeaders(),
+                pinata_api_key: PINATA_API_KEY,
+                pinata_secret_api_key: PINATA_API_SECRET,
+            },
+            });
+            // The returned data will include the IpfsHash (CID)
+            return response.data.IpfsHash;
+        } catch (error) {
+            console.error('Error uploading file:', error.response?.data || error.message);
+            throw error;
+        }
+        }
+
+         */
+        
         // you must pick from one of the whitelisted tags here: https://docs.story.foundation/docs/dispute-module#/dispute-tags
         targetTag: 'IMPROPER_REGISTRATION',
         bond: 0,

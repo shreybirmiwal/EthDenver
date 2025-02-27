@@ -23,10 +23,10 @@ export async function mintNFT(to: Address, uri: string): Promise<number | undefi
         abi: defaultNftContractAbi,
     })
     const hash = await walletClient.writeContract({ ...request, account: account })
-    const { logs } = await publicClient.waitForTransactionReceipt({
-        hash,
-    })
-    if (logs[0].topics[3]) {
-        return parseInt(logs[0].topics[3], 16)
-    }
+const { logs } = await publicClient.waitForTransactionReceipt({ hash })
+const log = logs[0] as any
+if (log.topics && log.topics[3]) {
+  return parseInt(log.topics[3], 16)
+}
+
 }
