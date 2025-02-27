@@ -7,7 +7,7 @@ Unagi Network is a dePin network of security cameras (autonomously verified as l
 
 **Why should I care?** <br/>
 The current state of ai crypto agents brings privacy and decentralization - but to do what? Send tweets and buy memecoins?
-By bringing on-chain verified cameras, we can now create agents that do more useful things, like file insurnace claims autonomously. If agents that can tweet create $10m+ in value, imagine how much value agents that can actually do things will create
+By bringing on-chain verified cameras, we can now create agents that do more useful things, like file insurnace claims or prove aliby in court (in a verifiable trustless way ofc). If agents that can tweet create $10m+ in value, imagine how much value agents that can actually do things will create
 
 
 **What's the name mean lol** <br/>
@@ -27,8 +27,8 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
 
 
 ## Technical Deep-Dive
+![Autonomously Verified Service (Othentic + EigenLayer) (1)](https://github.com/user-attachments/assets/f2bafba1-bb67-481f-8be8-73269df1f20f)
 
-![Autonomously Verified Service (Othentic + EigenLayer)-3](https://github.com/user-attachments/assets/14603b79-e95f-4c67-b6c5-bc9609e9d557)
 
 ### Step 1: Supplying 'UNAGI' (being a supplier of video stream footage)
 
