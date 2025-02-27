@@ -77,6 +77,31 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
     }
 
 
+    async function disputeIP(targetIpId, cid) {
+
+        console.log("Disputing IP ID", targetIpId);
+        try {
+            const client = await setupStoryClient();
+
+            const disputeResponse = await client.dispute.raiseDispute({
+                targetIpId: targetIpId,
+                // NOTE: you must use your own CID here, because every time it is used,
+                // the protocol does not allow you to use it again
+                cid: cid,
+                // you must pick from one of the whitelisted tags here: 
+                // https://docs.story.foundation/docs/dispute-module#dispute-tags
+                targetTag: 'IMPROPER_REGISTRATION',
+                bond: 0,
+                liveness: 2592000,
+                txOptions: { waitForTransaction: true },
+            })
+            console.log(`Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`)
+        }
+        catch (error) {
+            console.error("Error disputing IP:", error);
+        }
+    }
+
 
     const [view, setView] = useState({
         center: [40.7128, -74.0060],
@@ -178,6 +203,11 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                         <div className="terminal-text border-t-2 border-green-500 pt-2" onClick={() => PayRoyalty(selectedCam.ipId)}>
                             > PAY ROYALTY
                         </div>
+
+                        <div className="terminal-text border-t-2 border-red-500 pt-2" onClick={() => disputeIP(selectedCam.ipId, selectedCam.uid)}>
+                            > DISPUTE (this is my camera!)
+                        </div>
+
                     </div>
                 </div>
             </div>
