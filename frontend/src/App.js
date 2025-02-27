@@ -428,7 +428,7 @@ function App() {
         description: newCamDesc,
         txHash: data.txHash,
         ipId: data.ipId,
-        tokenId: data.tokenId
+        tokenId: Number(data.tokenId)
       }),
     });
     setShowPopup(false);
