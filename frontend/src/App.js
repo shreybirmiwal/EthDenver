@@ -114,7 +114,7 @@ function App() {
       chainId: "aeneid", // Replace with your actual chain ID
     });
   }
-  async function registerIpWithRoyalties(image_url) {
+  async function registerIpWithRoyalties(image_url, camDesc) {
     try {
       const client = await setupStoryClient();
 
@@ -156,8 +156,13 @@ function App() {
         allowDuplicates: true,
         // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
         ipMetadata: {
+
           image: { image_url },
           mediaType: 'image/jpeg',
+
+          title: 'CAM-NETWORK-IP',
+          description: camDesc,
+
           ipMetadataURI: 'test-uri',
           ipMetadataHash: stringToHex('test-metadata-hash', { size: 32 }),
           nftMetadataHash: stringToHex('test-nft-metadata-hash', { size: 32 }),
@@ -411,7 +416,7 @@ function App() {
   const addNewCamera = async () => {
 
     // do story protocol
-    var data = await registerIpWithRoyalties(newCamUrl)
+    var data = await registerIpWithRoyalties(newCamUrl, newCamDesc);
     console.log("registered data  = ", data)
 
     console.log("registered data ", data.txHash, data.tokenId, data.ipId)
@@ -655,17 +660,3 @@ function App() {
 }
 
 export default App;
-
-function AccountInfo() {
-  const { address, isConnected, chain } = useAccount();
-
-  return (
-    <div>
-      <p>
-        wagmi connected: {isConnected ? 'true' : 'false'}
-      </p>
-      <p>wagmi address: {address}</p>
-      <p>wagmi network: {chain?.id}</p>
-    </div>
-  );
-};
