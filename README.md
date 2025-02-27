@@ -7,7 +7,7 @@ Unagi Network is a dePin network of security cameras (autonomously verified as l
 
 **Why should I care?** <br/>
 The current state of ai crypto agents brings privacy and decentralization - but to do what? Send tweets and buy memecoins?
-By bringing on-chain verified cameras, we can now create agents that do more useful things, like file insurnace claims autonomously.
+By bringing on-chain verified cameras, we can now create agents that do more useful things, like file insurnace claims autonomously. If agents that can tweet create $10m+ in value, imagine how much value agents that can actually do things will create
 
 
 **What's the name mean lol** <br/>
@@ -40,8 +40,18 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
 
 ### Step 2: Querying the network
 
+- Ask any query, such as "Find me the man on ethDenver mainstage"
+- Using a mix of agentic reasoning and vector embedding search, Unagi queries relevent cameras in the network
+<img width="1437" alt="Screenshot 2025-02-27 at 9 38 55 AM" src="https://github.com/user-attachments/assets/4f836b86-bd81-4786-b775-9ff411172ae1" />
+
+
 ### Step 3: Agentic actions
 
+SHOW UPDATED IMAGE OF MAP MARKER OF SREERAM
+- The query found a camera on mainstage ethDenver and found the founder of EigenLayer
+- You can see details about the person found in the image
+- You can pay royalty or dispute the IP of the image (say if someone is using your camera footage or using illegal footage location)
+- You can run agentic actions, like automatically create on-chain insurance claims (if this was a camera pointed at a burglarly or car crash etc)
 
    
 There are two primary users for this project: camera providers and end-users. Camera Providers can upload their camera RTSP live streams into our network, and end users can write a query in our project, which will access and return cameras that contain the given query (ie look for robbery). Location search has also been added, allowing end users to select a camera on the map to get its details.
@@ -68,7 +78,11 @@ When a camera is returned from a user's query, the camera provider is given toke
 # Integrations
 If you were a sponsor and wanted to see how we used your integration in our project, see below.
 
-## Autonome
+### Autonome
+Autonome acts as our agent hosting layer. We use agentic actions in our platform to do things like 'automatically create insurance claims' based on camera footage on chain
+
+This is really powerful
+
 We utilized autonome to host our Coinbase Developer Platform (CDP) agentKit agent. After deploying this agent, we called the Autonome API and prompted our agent to mint an NFT that acts as an insurance claim.
 
 Future: one future implementation would be to deploy our own agent framework that does CDP SDK + AgentKit, which would allow us to execute smart contracts
