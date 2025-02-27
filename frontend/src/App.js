@@ -23,7 +23,6 @@ import {
   useAccount,
 } from 'wagmi';
 import { QueryClient, QueryClientProvider, infiniteQueryOptions } from '@tanstack/react-query';
-import TestComponent from './TestComponent';
 
 
 const TerminalInput = ({ label, value, onChange, placeholder }) => (
@@ -115,7 +114,7 @@ function App() {
       chainId: "aeneid", // Replace with your actual chain ID
     });
   }
-  async function registerIpWithRoyalties() {
+  async function registerIpWithRoyalties(image_url) {
     try {
       const client = await setupStoryClient();
 
@@ -157,11 +156,14 @@ function App() {
         allowDuplicates: true,
         // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
         ipMetadata: {
+          image: { image_url },
+          mediaType: 'image/jpeg',
           ipMetadataURI: 'test-uri',
           ipMetadataHash: stringToHex('test-metadata-hash', { size: 32 }),
           nftMetadataHash: stringToHex('test-nft-metadata-hash', { size: 32 }),
           nftMetadataURI: 'test-nft-uri',
         },
+
         txOptions: { waitForTransaction: true },
       })
 
@@ -409,7 +411,7 @@ function App() {
   const addNewCamera = async () => {
 
     // do story protocol
-    var data = await registerIpWithRoyalties()
+    var data = await registerIpWithRoyalties(newCamUrl)
     console.log("registered data  = ", data)
 
     console.log("registered data ", data.txHash, data.tokenId, data.ipId)

@@ -4,6 +4,28 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './home.css';
 
+
+
+import { custom, stringToHex } from 'viem';
+import { useWalletClient } from "wagmi";
+import { StoryClient, PIL_TYPE } from "@story-protocol/core-sdk";
+import { LicenseTerms } from '@story-protocol/core-sdk';
+import { zeroAddress, zeroHash } from 'viem'
+
+import {
+    DynamicContextProvider,
+    DynamicWidget,
+} from '@dynamic-labs/sdk-react-core';
+import {
+    createConfig,
+    WagmiProvider,
+    useAccount,
+} from 'wagmi';
+import { QueryClient, QueryClientProvider, infiniteQueryOptions } from '@tanstack/react-query';
+
+
+
+
 const createDotIcon = () => {
     return new L.DivIcon({
         className: 'green-dot-marker',
@@ -20,6 +42,40 @@ const DarkTileLayer = () => (
 );
 
 const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
+
+    const { data: wallet } = useWalletClient();
+    async function setupStoryClient() {
+        if (!wallet) {
+            throw new Error("Wallet not connected");
+        }
+        return StoryClient.newClient({
+            account: wallet.account,
+            transport: custom(wallet.transport),
+            chainId: "aeneid", // Replace with your actual chain ID
+        });
+    }
+
+    async function PayRoyalty(receiverIpId) {
+        try {
+            const client = await setupStoryClient();
+
+            const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
+                receiverIpId: receiverIpId,
+                payerIpId: zeroAddress,
+                token: '0x1514000000000000000000000000000000000000',
+                amount: 2,
+                txOptions: { waitForTransaction: true },
+            });
+
+
+            console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
+
+        } catch (error) {
+            console.error("Error registering IP with royalties:", error);
+        }
+    }
+
+
 
     const [view, setView] = useState({
         center: [40.7128, -74.0060],
