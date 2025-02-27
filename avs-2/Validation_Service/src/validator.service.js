@@ -4,6 +4,7 @@ const dalService = require("./dal.service");
 async function validate(proofOfTask) {
 
   try {
+    const token = process.env.BITMINDKEY;
     const taskResult = await dalService.getIPfsTask(proofOfTask);
 
     var image_url = "https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg";
@@ -26,7 +27,7 @@ async function validate(proofOfTask) {
     );
     const res_me = await response.json();
     console.log("VALIDATOR ########")
-    console.log(res);
+    console.log(res_me);
     console.log("VALIDATOR ########")
 
 
