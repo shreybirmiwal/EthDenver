@@ -56,6 +56,7 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
     }
 
     async function PayRoyalty(receiverIpId) {
+        console.log("Paying royalty to reciever IP ID", receiverIpId);
         try {
             const client = await setupStoryClient();
 
@@ -120,6 +121,8 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
 
         return (
             <div className="fixed inset-0 flex items-center justify-center z-[1000] pointer-events-none" onClick={() => setSelectedCam(null)}>
+
+
                 <div className="bg-black border-2 border-green-500 w-3/4 h-3/4 flex relative pointer-events-auto p-2">
                     {/* Refresh Button */}
                     <button
@@ -171,6 +174,10 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                             </div>
 
                         }
+
+                        <div className="terminal-text border-t-2 border-green-500 pt-2" onClick={() => PayRoyalty(selectedCam.ipId)}>
+                            > PAY ROYALTY
+                        </div>
                     </div>
                 </div>
             </div>
@@ -179,6 +186,8 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
 
     return (
         <div className="h-screen w-full cyber-map-container">
+            <DynamicWidget />
+
             <MapContainer
                 center={view.center}
                 zoom={view.zoom}
