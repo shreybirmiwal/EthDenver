@@ -88,6 +88,4 @@ py flask_server.py
 
 3. #ffmpeg -re -stream_loop -1 -i {insert_mp4_file} -rtsp_transport tcp -c copy -f rtsp rtsp://localhost:8554/mystream
 
-3.1 optional: -vf "transpose=1,scale=640:480"
-
 4. run python multi-stream.py
