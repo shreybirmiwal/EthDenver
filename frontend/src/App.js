@@ -527,7 +527,7 @@ function App() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: bootSequence.length * 0.143 }}
+            transition={{ delay: bootSequence.length * 0.235 }}
           >
 
 
