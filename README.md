@@ -14,7 +14,7 @@ By bringing on-chain verified cameras, we can now create agents that do more use
 Unagi means "a state of total awareness" ([reference](https://www.youtube.com/watch?v=UPW3iSLPrPg)) as coined by Ross Geller in an Friends episode.
 
 
-**Use Cases** <br/>
+**Our Favorite Use Cases** <br/>
 - “Find me who stole my car and file an insurance claim with the footage”
 
 - “Book an Uber to the tennis courts, if they appear to be dry enough to play”
@@ -31,12 +31,16 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
 ![Autonomously Verified Service (Othentic + EigenLayer)-3](https://github.com/user-attachments/assets/14603b79-e95f-4c67-b6c5-bc9609e9d557)
 
 ### Step 1: Supplying 'UNAGI' (being a supplier of video stream footage)
+
+- Upload details of your camera to our network
+- Mints an IP Story Protocol NFT of the camera and saves your stream to the database
+- Calls the Othentic AVS for executioners/validators to run a 'deep-fake' detection and store results on-chain (thus verifying the camera)
+
 <img width="683" alt="Screenshot 2025-02-27 at 8 25 16 AM" src="https://github.com/user-attachments/assets/f32a3448-edb7-4f0e-ace2-67ed42622f92" />
-1. Upload details of your camera to our network
-3. Mints an IP Story Protocol NFT of the camera and saves your stream to the database
-4. Calls the Othentic AVS for executioners/validators to run a 'deep-fake' detection and store results on-chain (thus verifying the camera)
 
 ### Step 2: Querying the network
+
+### Step 3: Agentic actions
 
 
    
@@ -98,22 +102,36 @@ Future:
 
 Feedback:
 
-# Installation
-## React Web App
-
+# Installation and local developing
+**Frontend (Create-React-App)**
+```
 cd frontend
-
 npm install --legacy-peer-deps
-
-npm start
-
-## Flask backend
+npm run start
+```
+**Backend (Flask Server)**
+```
 cd backend
-
-py flask_server.py
-
-## Livestream
-
+python3 main.py
+```
+Create a env for the backend:
+```
+#For text embeddings
+OPENAI_API_KEY=
+#To search face match for people details online
+PPLX_API_KEY=
+#To store livestream data updates
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+#To send email updates
+GOOGLE_APP_PASSWORD=
+#For LLM inference
+TARGON_API_KEY=
+#To connect with autonome agent
+API_AUTH_AUTONOME=
+```
+**Host a livestream**
+```
 1. Run docker desktop
 
 2. docker run --rm -it -p 8554:8554 aler9/rtsp-simple-server
@@ -121,3 +139,4 @@ py flask_server.py
 3. #ffmpeg -re -stream_loop -1 -i {insert_mp4_file} -rtsp_transport tcp -c copy -f rtsp rtsp://localhost:8554/mystream
 
 4. run python multi-stream.py
+```
