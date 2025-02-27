@@ -587,6 +587,7 @@ def call_agent():
         print("Call agent called in backedn")
         data = request.json
         cam = data['cam']
+        user_wallet_addy = data['wallet_addy']
         
         imageDesc = getImage_Description(cam['image_url'])
 
@@ -601,7 +602,7 @@ def call_agent():
             'Content-Type': 'application/json'
         }
         
-        payload = {"message": "Here is a description of our agent" + imageDesc}
+        payload = {"message": "given a description of a camera, mint a NFT and send to this address. Include something like 'Insurance Claim:' if applicable in the NFt title: " + imageDesc}
         
         response = requests.post(api_url, json=payload, headers=headers)
         response.raise_for_status()

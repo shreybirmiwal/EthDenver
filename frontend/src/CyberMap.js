@@ -122,12 +122,12 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
         return null;
     }
 
-    const callAgent = async (cam) => {
+    const callAgent = async (cam, wallet_addy) => {
 
         const response = await fetch('/api/callAgent', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ "cam": cam })
+            body: JSON.stringify({ "cam": cam, "wallet_addy": wallet_addy })
         });
 
         const data = await response.json();
@@ -226,7 +226,7 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                             > DISPUTE (this is my camera!)
                         </div>
 
-                        <div className="terminal-text border-t-2 border-green-500 pt-2" onClick={() => callAgent(selectedCam)}>
+                        <div className="terminal-text border-t-2 border-green-500 pt-2" onClick={() => callAgent(selectedCam, wallet.account)}>
                             > INSURANCE AGENT
                         </div>
 
