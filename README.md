@@ -2,13 +2,13 @@
 
 ![unagi logo](https://github.com/user-attachments/assets/b0d63934-af12-4221-a9bd-83a5d446f6e8)
 
-Unagi, also known as a state of total awareness ([reference](https://www.youtube.com/watch?v=UPW3iSLPrPg)), DePIN network of autonomously verified cameras that allows agents to access the real world in real-time.
+Unagi, also known as a state of total awareness ([reference](https://www.youtube.com/watch?v=UPW3iSLPrPg)), is a DePIN network of autonomously verified cameras that allows agents to access the real world in real time.
 
 # Flow Diagram
 ![Autonomously Verified Service (Othentic + EigenLayer)-3](https://github.com/user-attachments/assets/14603b79-e95f-4c67-b6c5-bc9609e9d557)
 
 
-There are two primary users for this project: camera providers and end-users. Camera Providers can upload their camera RTSP livestreams into our network, and end users can write a query in our project, which will access and return cameras that contain the given query (ie look for robbery). Location search has also been added, allowing end users to select a camera on the map to get its details.
+There are two primary users for this project: camera providers and end-users. Camera Providers can upload their camera RTSP live streams into our network, and end users can write a query in our project, which will access and return cameras that contain the given query (ie look for robbery). Location search has also been added, allowing end users to select a camera on the map to get its details.
 
 
 Due to processing constraints, a script snapshots the camera livestreams, and uploads every 30th frame as the image. The following details are stored for every camera:
