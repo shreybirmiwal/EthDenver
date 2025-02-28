@@ -25,6 +25,9 @@ import {
 import { QueryClient, QueryClientProvider, infiniteQueryOptions } from '@tanstack/react-query';
 
 
+import { PinataSDK } from 'pinata-web3'
+
+
 const TerminalInput = ({ label, value, onChange, placeholder }) => (
   <div className="mb-4">
     <div className="text-green-500 text-sm mb-1">{label}:</div>
@@ -123,6 +126,24 @@ const bootSequence = [
 // ];
 
 function App() {
+
+  const pinata = new PinataSDK({
+    pinataJwt: process.env.PINATA_JWT,
+  })
+
+
+  const uploadFileToIPFS = async (filePath, fileName, fileType) => {
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`File not found: ${filePath}`)
+    }
+    const fullPath = path.join(process.cwd(), filePath)
+    const blob = new Blob([fs.readFileSync(fullPath)])
+    const file = new File([blob], fileName, { type: fileType })
+    const { IpfsHash } = await pinata.upload.file(file)
+    // get cid
+
+  }
+
   const terminalEndRef = useRef(null);
   const [state, setState] = useState('home');
   const [query, setQuery] = useState('');
@@ -187,12 +208,16 @@ function App() {
         expectGroupRewardPool: zeroAddress,
       };
 
-      const ipMetaData_temp =
-      {
+      //upload metadata to pinata
+      var meta_data_to_upload = {
         image: image_url,
         mediaType: 'image/jpeg',
         title: 'CAM-NETWORK-IP',
         description: camDesc,
+      }
+
+      const ipMetaData_temp =
+      {
         ipMetadataURI: 'test-uri',
         ipMetadataHash: stringToHex('test-metadata-hash', { size: 32 }),
         nftMetadataHash: stringToHex('test-nft-metadata-hash', { size: 32 }),
