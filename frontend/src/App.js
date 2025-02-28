@@ -24,7 +24,6 @@ import {
 } from 'wagmi';
 import { QueryClient, QueryClientProvider, infiniteQueryOptions } from '@tanstack/react-query';
 
-
 import { PinataSDK } from 'pinata-web3'
 
 
@@ -127,22 +126,11 @@ const bootSequence = [
 
 function App() {
 
+  // console.log("PINATA KEY ", process.env.REACT_APP_PINATA_JWT)
   const pinata = new PinataSDK({
-    pinataJwt: process.env.PINATA_JWT,
+    pinataJwt: process.env.REACT_APP_PINATA_JWT,
   })
 
-
-  const uploadFileToIPFS = async (filePath, fileName, fileType) => {
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`File not found: ${filePath}`)
-    }
-    const fullPath = path.join(process.cwd(), filePath)
-    const blob = new Blob([fs.readFileSync(fullPath)])
-    const file = new File([blob], fileName, { type: fileType })
-    const { IpfsHash } = await pinata.upload.file(file)
-    // get cid
-
-  }
 
   const terminalEndRef = useRef(null);
   const [state, setState] = useState('home');
@@ -173,7 +161,11 @@ function App() {
       chainId: "aeneid", // Replace with your actual chain ID
     });
   }
-  async function registerIpWithRoyalties(image_url, camDesc) {
+
+
+
+
+  async function registerIpWithRoyalties(cam_description, cam_image_url) {
     try {
       const client = await setupStoryClient();
 
@@ -208,23 +200,39 @@ function App() {
         expectGroupRewardPool: zeroAddress,
       };
 
-      //upload metadata to pinata
-      var meta_data_to_upload = {
-        image: image_url,
-        mediaType: 'image/jpeg',
-        title: 'CAM-NETWORK-IP',
-        description: camDesc,
+
+      const nftMetadata = {
+        name: "CAMERA_IP_ID:",
+        description: cam_description,
+        image: cam_image_url,
+      }
+      const IpMetadata = {
+        title: "CAMERA_IP_ID:",
+        description: cam_description,
+        image: cam_image_url,
       }
 
-      const ipMetaData_temp =
+      const Ipfs_NFT = await pinata.upload.json(nftMetadata)
+      const HASH_nft = Ipfs_NFT.IpfsHash
+      console.log("NFT metadata overall", Ipfs_NFT)
+      console.log("NFT METADATA HASH", HASH_nft)
+
+
+      const Ipfs_IP = await pinata.upload.json(IpMetadata)
+      const HASH_IP = Ipfs_IP.IpfsHash
+      console.log("IP METADATA HASH", HASH_IP)
+      console.log("IP METADATA OVERALL", Ipfs_IP)
+
+
+      const final_ipMetaData_temp =
       {
         ipMetadataURI: 'test-uri',
-        ipMetadataHash: stringToHex('test-metadata-hash', { size: 32 }),
-        nftMetadataHash: stringToHex('test-nft-metadata-hash', { size: 32 }),
+        ipMetadataHash: HASH_IP,
+        nftMetadataHash: HASH_nft,
         nftMetadataURI: 'test-nft-uri',
       }
 
-      console.log("IP METADATA", ipMetaData_temp)
+      console.log("IP METADATA FINAL", final_ipMetaData_temp)
 
       const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
         spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
@@ -232,7 +240,8 @@ function App() {
         // set to true to mint ip with same nft metadata
         allowDuplicates: true,
         // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
-        ipMetadata: ipMetaData_temp,
+
+        ipMetadata: final_ipMetaData_temp,
 
         txOptions: { waitForTransaction: true },
       })
@@ -264,6 +273,7 @@ function App() {
         "txHash": response.txHash,
         "tokenId": response.tokenId,
         "ipId": response.ipId,
+        "CID": HASH_nft
       }
 
     } catch (error) {
@@ -524,7 +534,7 @@ function App() {
     // console.log("VERIFIED CAM ON CHAIN ", verified_cam_data)
 
     // do story protocol
-    var data = await registerIpWithRoyalties(newCamUrl, newCamDesc);
+    var data = await registerIpWithRoyalties(newCamDesc, newCamUrl);
     console.log("registered data  = ", data)
     console.log("registered data ", data.txHash, data.tokenId, data.ipId)
 
@@ -542,7 +552,8 @@ function App() {
         description: newCamDesc,
         txHash: data.txHash,
         ipId: data.ipId,
-        tokenId: Number(data.tokenId)
+        tokenId: Number(data.tokenId),
+        CID: data.CID
         // txHash: 1,
         // ipId: 2,
         // tokenId: 3
