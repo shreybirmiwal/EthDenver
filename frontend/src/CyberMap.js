@@ -224,7 +224,7 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                             > PAY ROYALTY
                         </div>
 
-                        <div className="terminal-text border-t-2 border-red-500 pt-2" onClick={() => disputeIP(selectedCam.ipId, selectedCam.uid)}>
+                        <div className="terminal-text border-t-2 border-red-500 pt-2" onClick={() => disputeIP(selectedCam.ipId, selectedCam.CID)}>
                             > DISPUTE (this is my camera!)
                         </div>
 
