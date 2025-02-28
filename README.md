@@ -41,7 +41,7 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
 ### Step 2: Querying the network
 
 - Ask any query, such as "Find me the man on ethDenver mainstage"
-- Using a mix of agentic reasoning and vector embedding search, Unagi queries relevent cameras in the network
+- Using a mix of agentic reasoning and vector embedding search, Unagi queries relevant cameras in the network
 <img width="1437" alt="Screenshot 2025-02-27 at 9 38 55 AM" src="https://github.com/user-attachments/assets/4f836b86-bd81-4786-b775-9ff411172ae1" />
 
 
@@ -99,11 +99,7 @@ Othentic was used to verify that each livestream is genuine by pushing the verif
 
 Future:
 
-Feedback:
-
-docker compose super super helpful
-easier to add data / pass data in
-and then also moe documentaiton on getting the final data ansewer
+Feedback: The docker compose was very helpful and made it easy to add and pass data in. We'd love to see more documentation on getting the final data answer.
 
 ## Targon
 The Targon implementation allowed us to identify significant changes between frames and flag them in a consolidated surveillance report, allowing for users signed up for that camera to be notified of suspicious activity.
@@ -111,12 +107,6 @@ The Targon implementation allowed us to identify significant changes between fra
 Future: While we already detect objects using bounding boxes, we would love to implement a "history of object" feature that tracks objects movement across frames and allow users to receive reports on specific objects over selected time periods.
 
 Feedback: We initially wanted to use targon to run image analysis inference on the frames, but we had to pivot to using a different model (BLIP) to analyze the image and then convert it to text embeddings for targon to work with.
-
-## U2U DePIN Network
-
-Future:
-
-Feedback:
 
 # Installation and local developing
 **Frontend (Create-React-App)**
