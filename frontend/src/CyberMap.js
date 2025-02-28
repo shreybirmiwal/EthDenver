@@ -59,6 +59,8 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
 
     async function PayRoyalty(receiverIpId) {
         console.log("Paying royalty to reciever IP ID", receiverIpId);
+
+
         try {
             const client = await setupStoryClient();
 

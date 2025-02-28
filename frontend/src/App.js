@@ -187,33 +187,53 @@ function App() {
         expectGroupRewardPool: zeroAddress,
       };
 
+      const ipMetaData_temp =
+      {
+        image: image_url,
+        mediaType: 'image/jpeg',
+        title: 'CAM-NETWORK-IP',
+        description: camDesc,
+        ipMetadataURI: 'test-uri',
+        ipMetadataHash: stringToHex('test-metadata-hash', { size: 32 }),
+        nftMetadataHash: stringToHex('test-nft-metadata-hash', { size: 32 }),
+        nftMetadataURI: 'test-nft-uri',
+      }
+
+      console.log("IP METADATA", ipMetaData_temp)
+
       const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
         spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
         licenseTermsData: [{ terms: commercialRemixTerms, licensingConfig }], // IP already has non-commercial social remixing terms. You can add more here.
         // set to true to mint ip with same nft metadata
         allowDuplicates: true,
         // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
-        ipMetadata: {
-
-          image: { image_url },
-          mediaType: 'image/jpeg',
-
-          title: 'CAM-NETWORK-IP',
-          description: camDesc,
-
-          ipMetadataURI: 'test-uri',
-          ipMetadataHash: stringToHex('test-metadata-hash', { size: 32 }),
-          nftMetadataHash: stringToHex('test-nft-metadata-hash', { size: 32 }),
-          nftMetadataURI: 'test-nft-uri',
-        },
+        ipMetadata: ipMetaData_temp,
 
         txOptions: { waitForTransaction: true },
       })
 
+      console.log("res ", response)
+      var lisenceTermsId = response.licenseTermsIds[0]
 
       console.log(`Transaction hash: ${response.txHash}, 
                    Token ID: ${response.tokenId}, 
                    IPA ID: ${response.ipId}`);
+
+
+      const lisenceTokensMint = await client.license.mintLicenseTokens({
+        licenseTermsId: lisenceTermsId,
+        licensorIpId: response.ipId,
+        amount: 1,
+        maxMintingFee: 0n, // disabled
+        maxRevenueShare: 100, // default
+        txOptions: { waitForTransaction: true }
+      });
+
+
+      console.log(`Transaction hash of minting lisence tokens: ${lisenceTokensMint.txHash}, 
+                   Token ID: ${lisenceTokensMint.tokenId}, 
+                   IPA ID: ${lisenceTokensMint.ipId}`);
+
 
       return {
         "txHash": response.txHash,
@@ -475,8 +495,8 @@ function App() {
 
 
     //verify camera legitness using othentic avs
-    const verified_cam_data = await verify_camera_avs(newCamUrl)
-    console.log("VERIFIED CAM ON CHAIN ", verified_cam_data)
+    // const verified_cam_data = await verify_camera_avs(newCamUrl)
+    // console.log("VERIFIED CAM ON CHAIN ", verified_cam_data)
 
     // do story protocol
     var data = await registerIpWithRoyalties(newCamUrl, newCamDesc);
