@@ -23,7 +23,7 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
 
 
 **Demo Video**
-[DEMO VIDEO HERE 
+[[Unagi Demo](https://youtu.be/hlyd5wbxtxc)
 
 
 ## Technical Deep-Dive
