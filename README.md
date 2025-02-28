@@ -150,6 +150,7 @@ API_AUTH_AUTONOME=
 
 **Privacy and Validity Concerns**
 
-![image](https://github.com/user-attachments/assets/1bad318c-80d1-47ee-b157-f806da80b245)
+![image](https://github.com/user-attachments/assets/45a61a21-32b0-47b6-9ec9-fafd78ddc77c)
 
-![image](https://github.com/user-attachments/assets/2abe9a88-61e3-4cf8-beeb-9fb2e81dbd11)
+![image](https://github.com/user-attachments/assets/8a5e7a68-d1d2-48ee-ba0f-e6e3eba8ef16)
+
