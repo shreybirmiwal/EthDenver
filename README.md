@@ -22,8 +22,8 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
 - “Email me of any suspicious activity in Denver that you detect”
 
 
-**Demo Video**
-[[Unagi Demo]]
+**Demo Video (Clickable Image)**
+[![Image of Unagi](https://i.ibb.co/gMRJ5RSL/thumbnail-unagi.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
 
 
 ## Technical Deep-Dive
