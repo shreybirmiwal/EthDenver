@@ -1,0 +1,20 @@
+{
+  "name": "agents",
+  "version": "1.0.0",
+  "main": "deploy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": "",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "dotenv": "^16.4.7",
+    "ethers": "^5.8.0",
+    "hardhat": "^2.22.19"
+  }
+}
