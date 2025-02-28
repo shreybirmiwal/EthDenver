@@ -47,29 +47,30 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
 
 ### Step 3: Agentic actions
 
-<img width="961" alt="Screenshot 2025-02-27 at 10 07 27 PM" src="https://github.com/user-attachments/assets/b88035fb-b06d-41fe-9963-401e9f01a47a" />
 - The query found a camera on mainstage ethDenver and found the founder of EigenLayer
 - You can see details about the person found in the image
 - You can pay royalty or dispute the IP of the image (say if someone is using your camera footage or using illegal footage location)
 - You can run agentic actions, like automatically create on-chain insurance claims (if this was a camera pointed at a burglarly or car crash etc)
+<img width="961" alt="Screenshot 2025-02-27 at 10 07 27 PM" src="https://github.com/user-attachments/assets/b88035fb-b06d-41fe-9963-401e9f01a47a" />
 
    
-Due to processing constraints, a script snapshots the camera livestreams, and uploads every 30th frame as the image. The following details are stored for every camera:
+Due to processing constraints, a script snapshots the camera livestreams, and uploads every 30th frame as the image.
 
 # Integrations
 If you were a sponsor and wanted to see how we used your integration in our project, see below.
 
 ### Autonome
-Autonome acts as our agent hosting layer. We use agentic actions in our platform to do things like 'automatically create insurance claims' based on camera footage on chain
+Autonome acts as our agent hosting layer. We use agentic actions in our platform to do things like 'automatically create insurance claims' based on camera footage on chain.
 
 We had Autonome host our Coinbase Developer Platform (CDP) agentKit agent. After deploying this agent, we called the Autonome API and prompted our agent to mint an NFT that acts as an insurance claim.
 
-Future: One future implementation would be to deploy our own agent framework that does CDP SDK + AgentKit, which would allow us to execute smart contracts
+Future: One future implementation would be to deploy our own agent framework that does CDP SDK + AgentKit, which would allow us to execute smart contracts that would be more specific to the needs, such as querying onchain insurance providers.
 
-Feedback: Hyperbolic agent had some issues working until the dev team launched a v2. Implementing autonome into our code was also quite challenging, as the curl commands weren't working.
+Feedback: Hyperbolic agent had some issues working until the dev team launched a v2. Implementing autonome into our code was also quite challenging, as the curl commands weren't working. However the support from the team was very helpful and fast!
 
 ## Story Protocol
 Story Protocol was crucial in creating the incentive structure for camera providers. When a provider uploads their live stream, our application mints the imageURL as an NFT and registers it as an IPA. The camera provider is then paid a royalty every time a user queries that camera, incentivizing providers to be a part of the network.
+People can also dispute cameras, "this is stolen footage"!
 
 Future: We want to be able to have the frames collected by the camera to be put into a collection, giving users the ability to see previous significant frames queried by users.
 
@@ -77,10 +78,11 @@ Feedback: Our app was created using React.js, so it took us a good amount of tim
 
 ## Othentic
 Othentic was used to verify that each livestream is genuine by pushing the verified data onchain using EigenLayer's restaking security model.
+For each camera that is uploaded to our network, executioners and validators (off-chain) run a API for deepfake detection so that onchain we know the camera is verified.
 
-Future:
+Future: We want to use TEEs on each camera to verify 'legitness' and then get validators/executioners to check the attestation of the TEE off chain.
 
-Feedback: The docker compose was very helpful and made it easy to add and pass data in. We'd love to see more documentation on getting the final data answer.
+Feedback: The docker compose was very helpful and made it easy to add and pass data in. We'd love to see more documentation on getting the final data answer from pinata.
 
 ## Targon
 The Targon implementation allowed us to identify significant changes between frames and flag them in a consolidated surveillance report, allowing for users signed up for that camera to be notified of suspicious activity.
@@ -127,11 +129,3 @@ API_AUTH_AUTONOME=
 
 4. run python multi-stream.py
 ```
-
-
-**Privacy and Validity Concerns**
-
-![image](https://github.com/user-attachments/assets/45a61a21-32b0-47b6-9ec9-fafd78ddc77c)
-
-![image](https://github.com/user-attachments/assets/8a5e7a68-d1d2-48ee-ba0f-e6e3eba8ef16)
-
