@@ -56,6 +56,16 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
    
 Due to processing constraints, a script snapshots the camera livestreams, and uploads every 30th frame as the image.
 
+# Future Work
+
+### 1. Privacy Issues
+- We hope to implement ZK proofs to gate access to cameras: You can only access the camera ONCE you show a ZK proof of a polic report that your car was robbed
+- Token gate to only private markets (a museum could use our software, governments)
+
+### 2. Verification of camera footage
+- Camera footage currently is detected as deepfake through the AVS and verified off-chain.
+- We hope to make it such that each camera is required to plug in a TEE (trusted execution environment) that attests to the footage as being real. The executioners and validators in the AVS would check the attestation off chain and bring the verification of the cams onchain
+
 # Integrations
 If you were a sponsor and wanted to see how we used your integration in our project, see below.
 
