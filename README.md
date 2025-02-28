@@ -6,16 +6,16 @@ Unagi Network is a dePin network of security cameras (autonomously verified as l
 
 
 **Why should I care?** <br/>
-The current state of ai crypto agents brings privacy and decentralization - but to do what? Send tweets and buy memecoins?
-By bringing on-chain verified cameras, we can now create agents that do more useful things, like file insurnace claims or prove aliby in court (in a verifiable trustless way ofc). If agents that can tweet create $10m+ in value, imagine how much value agents that can actually do things will create
+The current state of AI crypto agents brings privacy and decentralization - but to do what? Send tweets and buy memecoins?
+By bringing on-chain verified cameras, we can now create agents that do more useful things, like file insurance claims or prove alibi in court (in a verifiable trustless way). If agents that can tweet create $10m+ in value, imagine how much value agents that can _actually_ do things will create.
 
 
 **What's the name mean lol** <br/>
-Unagi means "a state of total awareness" ([reference](https://www.youtube.com/watch?v=UPW3iSLPrPg)) as coined by Ross Geller in an Friends episode.
+Unagi means "a state of total awareness" ([reference](https://www.youtube.com/watch?v=UPW3iSLPrPg)) as coined by Ross Geller in a Friends episode.
 
 
 **Our Favorite Use Cases** <br/>
-- “Find me who stole my car and file an insurance claim with the footage”
+- “Find me who stole my car and file an insurance claim with the footage.”
 
 - “Book an Uber to the tennis courts, if they appear to be dry enough to play”
 
@@ -81,20 +81,18 @@ If you were a sponsor and wanted to see how we used your integration in our proj
 ### Autonome
 Autonome acts as our agent hosting layer. We use agentic actions in our platform to do things like 'automatically create insurance claims' based on camera footage on chain
 
-This is really powerful
+We had Autonome host our Coinbase Developer Platform (CDP) agentKit agent. After deploying this agent, we called the Autonome API and prompted our agent to mint an NFT that acts as an insurance claim.
 
-We utilized autonome to host our Coinbase Developer Platform (CDP) agentKit agent. After deploying this agent, we called the Autonome API and prompted our agent to mint an NFT that acts as an insurance claim.
+Future: One future implementation would be to deploy our own agent framework that does CDP SDK + AgentKit, which would allow us to execute smart contracts
 
-Future: one future implementation would be to deploy our own agent framework that does CDP SDK + AgentKit, which would allow us to execute smart contracts
-
-Feedback: Hyperbolic agent had some issues working until the dev team launched a v2. Implementing autonome into our code was also quite challenging as the curl commands weren't working.
+Feedback: Hyperbolic agent had some issues working until the dev team launched a v2. Implementing autonome into our code was also quite challenging, as the curl commands weren't working.
 
 ## Story Protocol
-Story Protocol was crucial in creating the incentive structure for camera providers. When a provider uploads their livestream, our application mints the imageURL as an NFT and registers it as an IPA. The camera provider is then paid a royalty every time a user queries that camera, incentivizing providers to be a part of the network.
+Story Protocol was crucial in creating the incentive structure for camera providers. When a provider uploads their live stream, our application mints the imageURL as an NFT and registers it as an IPA. The camera provider is then paid a royalty every time a user queries that camera, incentivizing providers to be a part of the network.
 
-Future: We want to be able to have the frames collected by the camera to be put into a collection, giving users the ability to see previous signficant frames queried by users.
+Future: We want to be able to have the frames collected by the camera to be put into a collection, giving users the ability to see previous significant frames queried by users.
 
-Feedback: Our app was created using React.js, so it took us a good amount of time installing dependencies and reworking scripts to fit Story into our project - would love to see better react.js compatibility in the future. Additionally, the typescript_tutorial was extremely helpful in quickstarting our project.
+Feedback: Our app was created using React.js, so it took us a good amount of time to install dependencies and rework scripts to fit Story into our project - we would love to see better React.js compatibility in the future. Additionally, the typescript_tutorial was extremely helpful in quickstarting our project.
 
 ## Othentic
 Othentic was used to verify that each livestream is genuine by pushing the verified data onchain using EigenLayer's restaking security model.
