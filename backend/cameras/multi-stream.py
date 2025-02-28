@@ -11,6 +11,18 @@ import time
 from httpx import RemoteProtocolError
 from transformers import BlipProcessor, BlipForConditionalGeneration
 from PIL import Image
+from ultralytics import YOLO
+model = YOLO("yolov8n.pt")  # Load YOLOv8 Nano (smallest model)
+
+#1. Run docker desktop
+
+#2. docker run --rm -it -p 8554:8554 aler9/rtsp-simple-server
+
+#3. #ffmpeg -re -stream_loop -1 -i /c/Users/xvize/Downloads/storerobbery.MP4 -rtsp_transport tcp -c copy -f rtsp rtsp://localhost:8554/mystream
+
+#3.1 optional: -vf "transpose=1,scale=640:480"
+
+#4. run this script
 
 # Load the BLIP processor and captioning model
 processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
@@ -29,7 +41,7 @@ SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 # 4. Load a pre-trained YOLOv5s model (small version) from Ultralytics
-model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+# model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True, force_reload=True)
 model.eval()
 
 # Function to upload frame to Supabase Storage
@@ -90,16 +102,21 @@ def process_stream(rtsp_url, camera_id, window_name):
             break
 
         # Run inference on the current frame
-        results = model(frame)
-        
-        # Extract raw detections (bounding boxes, confidences, and class indices)
-        raw_detections = results.xyxy[0].cpu().numpy().tolist()  # Convert to list for JSON serialization
+        results = model(frame)  # YOLOv8 returns a list of Results objects
+
+        # Extract detections (bounding boxes, confidences, and class indices)
+        boxes = results[0].boxes  # Access the first (and only) Results object
+        raw_detections = boxes.xyxy.cpu().numpy()  # Bounding boxes in [x1, y1, x2, y2] format
+        confidences = boxes.conf.cpu().numpy()  # Confidence scores
+        class_ids = boxes.cls.cpu().numpy()  # Class IDs
 
         # Convert raw detections into human-readable format
         readable_detections = []
-        for det in raw_detections:
-            x1, y1, x2, y2, conf, cls = det
-            label = model.names[int(cls)]
+        for i in range(len(raw_detections)):
+            x1, y1, x2, y2 = raw_detections[i]
+            conf = confidences[i]
+            cls = class_ids[i]
+            label = model.names[int(cls)]  # Get class label from class ID
             readable_detections.append({
                 "label": label,
                 "confidence": float(conf),
