@@ -47,33 +47,14 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
 
 ### Step 3: Agentic actions
 
-SHOW UPDATED IMAGE OF MAP MARKER OF SREERAM
+<img width="961" alt="Screenshot 2025-02-27 at 10 07 27 PM" src="https://github.com/user-attachments/assets/b88035fb-b06d-41fe-9963-401e9f01a47a" />
 - The query found a camera on mainstage ethDenver and found the founder of EigenLayer
 - You can see details about the person found in the image
 - You can pay royalty or dispute the IP of the image (say if someone is using your camera footage or using illegal footage location)
 - You can run agentic actions, like automatically create on-chain insurance claims (if this was a camera pointed at a burglarly or car crash etc)
 
    
-There are two primary users for this project: camera providers and end-users. Camera Providers can upload their camera RTSP live streams into our network, and end users can write a query in our project, which will access and return cameras that contain the given query (ie look for robbery). Location search has also been added, allowing end users to select a camera on the map to get its details.
-
-
 Due to processing constraints, a script snapshots the camera livestreams, and uploads every 30th frame as the image. The following details are stored for every camera:
-
-
-CameraID
-
-Location
-
-ImageURL of the current frame
-
-Timestamp of the current frame
-
-Description of the current frame
-
-
-When a camera is returned from a user's query, the camera provider is given tokenized rewards.
-
-# Demo Video
 
 # Integrations
 If you were a sponsor and wanted to see how we used your integration in our project, see below.
