@@ -146,3 +146,10 @@ API_AUTH_AUTONOME=
 
 4. run python multi-stream.py
 ```
+
+
+**Privacy and Validity Concerns**
+
+![image](https://github.com/user-attachments/assets/1bad318c-80d1-47ee-b157-f806da80b245)
+
+![image](https://github.com/user-attachments/assets/2abe9a88-61e3-4cf8-beeb-9fb2e81dbd11)
