@@ -122,7 +122,7 @@ def query_determine():
         if not data or 'prompt' not in data:
             return jsonify({'error': 'No prompt provided'}), 400
             
-        query = "Return in valid JSON only. First, examine the following user query and determine if it states/matches any of the following locations: {0:Denver, 1:Austin, 2:NYC}. If it is, please return the index of the place in the json response in ‘location’ if no location exists, return -1. Finally, check if this requires a 'face_search' , return True of False. This query should be checking if the user is asking to get details on a face or not. Here is an example query “Find me the person who is on stage in ethDenver now” —> return JSON: {“location”:0, “face_search”:true} explanation: we need 0th location(denver) and we need face search to get the person. here is another example:  “Find me the person in orange jumpsuit escaping prison” —> return JSON: {“location”:-1, “face_search”:true}. Explanation: we cant search by location bc we dont know and it doesnt match the location searches,. we need face_search to get the face details. “Find the stolen red car” —> return JSON: {“location”:-1, “face_search”:false}. Explanation: we cant search by location bc we dont know and it doesnt match the location searches,. we cant use face_search because we arent searching for a specific face. thanks! USER QUERY:" + data['prompt'] 
+        query = "Return in valid JSON only. First, examine the following user query and determine if it states/matches any of the following locations: {382732:Denver, 1:Austin}. If it is, please return the index of the place in the json response in ‘location’ if no location exists, return -1. Finally, check if this requires a 'face_search' , return True of False. This query should be checking if the user is asking to get details on a face or not. Here is an example query “Find me the person who is on stage in ethDenver now” —> return JSON: {“location”:382732, “face_search”:true} explanation: we need 382732th location(denver) and we need face search to get the person. here is another example:  “Find me the person in orange jumpsuit escaping prison” —> return JSON: {“location”:-1, “face_search”:true}. Explanation: we cant search by location bc we dont know and it doesnt match the location searches,. we need face_search to get the face details. “Find the stolen red car” —> return JSON: {“location”:-1, “face_search”:false}. Explanation: we cant search by location bc we dont know and it doesnt match the location searches,. we cant use face_search because we arent searching for a specific face. thanks! USER QUERY:" + data['prompt'] 
         
         ret = GPT_Call(query)
         return jsonify(ret)
@@ -276,6 +276,7 @@ def add_camera():
         data = request.json
         required_fields = ["uid", "location", "image_url", "description", "txHash", "ipId", "tokenId"]
         if any(field not in data for field in required_fields):
+            print("missing fields")
             return jsonify({'error': 'Missing fields in request'}), 400
 
 

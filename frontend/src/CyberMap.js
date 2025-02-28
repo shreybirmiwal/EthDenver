@@ -192,7 +192,7 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
 
                     <div className="w-1/2 border-r-2 border-green-500 p-4">
                         <img
-                            src={`${selectedCam.image_url}?ts=${refreshTimestamp}`}
+                            src={`${selectedCam.image_url}`}
                             alt="Camera feed"
                             className="w-full h-full object-contain"
                         />

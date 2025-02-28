@@ -474,14 +474,13 @@ function App() {
   const addNewCamera = async () => {
 
 
-    //verify camera legitness
+    //verify camera legitness using othentic avs
     const verified_cam_data = await verify_camera_avs(newCamUrl)
     console.log("VERIFIED CAM ON CHAIN ", verified_cam_data)
 
     // do story protocol
     var data = await registerIpWithRoyalties(newCamUrl, newCamDesc);
     console.log("registered data  = ", data)
-
     console.log("registered data ", data.txHash, data.tokenId, data.ipId)
 
     const newCamUid = Math.floor(Math.random() * 1000000);
@@ -499,6 +498,9 @@ function App() {
         txHash: data.txHash,
         ipId: data.ipId,
         tokenId: Number(data.tokenId)
+        // txHash: 1,
+        // ipId: 2,
+        // tokenId: 3
       }),
     });
     setShowPopup(false);
