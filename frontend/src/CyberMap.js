@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './home.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 
@@ -60,6 +61,18 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
     async function PayRoyalty(receiverIpId) {
         console.log("Paying royalty to reciever IP ID", receiverIpId);
 
+        toast.info('Paying royalty to reciever IP:' + receiverIpId, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+        });
+
 
         try {
             const client = await setupStoryClient();
@@ -75,6 +88,18 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
 
             console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
 
+            toast.success(`Royalty paid successfully: tx: ${payRoyalty.txHash}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                transition: Bounce,
+            });
+
         } catch (error) {
             console.error("Error registering IP with royalties:", error);
         }
@@ -84,6 +109,19 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
     async function disputeIP(targetIpId, cid) {
 
         console.log("Disputing IP ID", targetIpId);
+
+        toast.info('Disputing IP ID:' + targetIpId, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+        });
+
         try {
             const client = await setupStoryClient();
 
@@ -100,6 +138,18 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                 txOptions: { waitForTransaction: true },
             })
             console.log(`Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`)
+
+            toast.success(`Dispute raised successfully: tx: ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                transition: Bounce,
+            });
         }
         catch (error) {
             console.error("Error disputing IP:", error);
@@ -274,6 +324,20 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                 })}
             </MapContainer>
             <CentralPopup />
+
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+                transition={Bounce}
+            />
         </div>
     );
 };

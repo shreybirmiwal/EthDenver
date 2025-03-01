@@ -6,6 +6,7 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import CyberMap from './CyberMap';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 import { custom, stringToHex } from 'viem';
@@ -157,7 +158,19 @@ function App() {
   const { data: wallet } = useWalletClient();
   async function setupStoryClient() {
     if (!wallet) {
+      toast.error('Wallet not connected!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
       throw new Error("Wallet not connected");
+
     }
     return StoryClient.newClient({
       account: wallet.account,
@@ -249,6 +262,18 @@ function App() {
 
       console.log("IP METADATA FINAL", final_ipMetaData_temp)
 
+      toast.info('Awaiting IP NFT mint', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+
       const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
         spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
         licenseTermsData: [{ terms: commercialRemixTerms, licensingConfig }], // IP already has non-commercial social remixing terms. You can add more here.
@@ -282,6 +307,18 @@ function App() {
       console.log(`Transaction hash of minting lisence tokens: ${lisenceTokensMint.txHash}, 
                    Token ID: ${lisenceTokensMint.tokenId}, 
                    IPA ID: ${lisenceTokensMint.ipId}`);
+
+      toast.success('Minted IP with ID:' + lisenceTokensMint.ipId, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
 
 
       return {
@@ -549,6 +586,8 @@ function App() {
     // console.log("VERIFIED CAM ON CHAIN ", verified_cam_data)
 
     // do story protocol
+
+
     var data = await registerIpWithRoyalties(newCamDesc, newCamUrl);
     console.log("registered data  = ", data)
     console.log("registered data ", data.txHash, data.tokenId, data.ipId)
@@ -573,6 +612,18 @@ function App() {
         // ipId: 2,
         // tokenId: 3
       }),
+    });
+
+    toast.success('Added camera!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      transition: Bounce,
     });
     setShowPopup(false);
   };
@@ -778,6 +829,20 @@ function App() {
 
           <div ref={terminalEndRef} />
         </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          transition={Bounce}
+        />
+
       </div>
     );
   }
