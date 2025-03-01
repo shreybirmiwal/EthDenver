@@ -209,6 +209,28 @@ def clear_db():
     return jsonify({'message': 'Database cleared'}), 200
 
 
+@app.route('/api/delete_cameras', methods=['POST'])
+def delete_cameras():
+    try:
+        data = request.json
+        if 'uids' not in data:
+            return jsonify({'error': 'Missing required parameter: uids'}), 400
+        uids = data['uids']
+        if not isinstance(uids, list):
+            return jsonify({'error': 'uids must be a list'}), 400
+
+        # Check if the UIDs are valid and exist in the database
+        result = camera_collection.get(include=["metadatas", "documents"])
+        ids = result.get("ids", [])
+        invalid_uids = [uid for uid in uids if uid not in ids]
+        if invalid_uids:
+            return jsonify({'error': f'Invalid UIDs: {invalid_uids}'}), 400
+
+        camera_collection.delete(ids=uids)
+        return jsonify({'message': 'Cameras deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/answer_query_no_face', methods=['POST'])
 def answer_query_no_face():
     print("STARTED ANSWER QUERY NO FACE")
