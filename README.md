@@ -58,9 +58,11 @@ Due to processing constraints, a script snapshots the camera livestreams, and up
 
 For each snapshot, we do image analysis using BLIP and YOLO to run inference of the footage and create bounding boxes of significant objects at that frame.
 
-Below is a livestream from a home security camera that caught a hit and run incident.
+Below is a livestream from a home security camera that caught a hit and run incident. 
 
-https://github.com/user-attachments/assets/18317e8a-24af-4ff7-8f73-052b622730e6
+
+https://github.com/user-attachments/assets/cfa11ef9-4e36-4131-bcec-84951c736c2e
+
 
 # Future Work
 
