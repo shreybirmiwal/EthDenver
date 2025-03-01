@@ -25,6 +25,10 @@ import {
 import { QueryClient, QueryClientProvider, infiniteQueryOptions } from '@tanstack/react-query';
 
 
+import { CID } from 'multiformats/cid'
+import { sha256 } from 'multiformats/hashes/sha2'
+import * as dagPB from '@ipld/dag-pb'
+
 
 
 const createDotIcon = () => {
@@ -70,7 +74,6 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
             draggable: true,
             progress: undefined,
             theme: "dark",
-            transition: Bounce,
         });
 
 
@@ -97,7 +100,6 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                 draggable: true,
                 progress: undefined,
                 theme: "dark",
-                transition: Bounce,
             });
 
         } catch (error) {
@@ -106,37 +108,47 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
     }
 
 
-    async function disputeIP(targetIpId, cid) {
+    async function convertToCIDv0(content) {
+        const bytes = dagPB.encode({
+            Data: new TextEncoder().encode(JSON.stringify(content)),
+            Links: []
+        })
 
-        console.log("Disputing IP ID", targetIpId);
-
-        toast.info('Disputing IP ID:' + targetIpId, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-            transition: Bounce,
-        });
-
+        const hash = await sha256.digest(bytes)
+        return CID.createV0(hash).toString()
+    }
+    async function disputeIP(targetIpId, metadataContent) { // Pass metadata instead of CID
         try {
-            const client = await setupStoryClient();
+
+            const client = await setupStoryClient()
+
+
+
+            console.log("Disputing IP ID", targetIpId);
+
+            toast.info('Disputing IP ID:' + targetIpId, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+
+            // Convert metadata to CIDv0
+            const disputeCID = await convertToCIDv0(metadataContent)
 
             const disputeResponse = await client.dispute.raiseDispute({
                 targetIpId: targetIpId,
-                // NOTE: you must use your own CID here, because every time it is used,
-                // the protocol does not allow you to use it again
-                cid: cid,
-                // you must pick from one of the whitelisted tags here: 
-                // https://docs.story.foundation/docs/dispute-module#dispute-tags
+                cid: disputeCID, // Use converted CIDv0
                 targetTag: 'IMPROPER_REGISTRATION',
                 bond: 0,
                 liveness: 2592000,
                 txOptions: { waitForTransaction: true },
             })
+            console.log(`Dispute raised: ${disputeResponse.txHash}`)
             console.log(`Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`)
 
             toast.success(`Dispute raised successfully: tx: ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`, {
@@ -148,13 +160,59 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                 draggable: true,
                 progress: undefined,
                 theme: "dark",
-                transition: Bounce,
             });
-        }
-        catch (error) {
-            console.error("Error disputing IP:", error);
+        } catch (error) {
+            console.error("Error disputing IP:", error)
         }
     }
+
+    // async function disputeIP(targetIpId, cid) {
+
+    //     console.log("Disputing IP ID", targetIpId);
+
+    //     toast.info('Disputing IP ID:' + targetIpId, {
+    //         position: "top-right",
+    //         autoClose: 5000,
+    //         hideProgressBar: false,
+    //         closeOnClick: false,
+    //         pauseOnHover: true,
+    //         draggable: true,
+    //         progress: undefined,
+    //         theme: "dark",
+    //     });
+
+    //     try {
+    //         const client = await setupStoryClient();
+
+    //         const disputeResponse = await client.dispute.raiseDispute({
+    //             targetIpId: targetIpId,
+    //             // NOTE: you must use your own CID here, because every time it is used,
+    //             // the protocol does not allow you to use it again
+    //             cid: cid,
+    //             // you must pick from one of the whitelisted tags here: 
+    //             // https://docs.story.foundation/docs/dispute-module#dispute-tags
+    //             targetTag: 'IMPROPER_REGISTRATION',
+    //             bond: 0,
+    //             liveness: 2592000,
+    //             txOptions: { waitForTransaction: true },
+    //         })
+    //         console.log(`Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`)
+
+    //         toast.success(`Dispute raised successfully: tx: ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`, {
+    //             position: "top-right",
+    //             autoClose: 5000,
+    //             hideProgressBar: false,
+    //             closeOnClick: false,
+    //             pauseOnHover: true,
+    //             draggable: true,
+    //             progress: undefined,
+    //             theme: "dark",
+    //         });
+    //     }
+    //     catch (error) {
+    //         console.error("Error disputing IP:", error);
+    //     }
+    // }
 
 
     const [view, setView] = useState({
@@ -336,7 +394,6 @@ const CyberMap = ({ allCams, query_found_cam, query_found_res }) => {
                 draggable
                 pauseOnHover
                 theme="dark"
-                transition={Bounce}
             />
         </div>
     );

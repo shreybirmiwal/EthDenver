@@ -167,7 +167,6 @@ function App() {
         draggable: true,
         progress: undefined,
         theme: "dark",
-        transition: Bounce,
       });
       throw new Error("Wallet not connected");
 
@@ -271,7 +270,6 @@ function App() {
         draggable: true,
         progress: undefined,
         theme: "dark",
-        transition: Bounce,
       });
 
       const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
@@ -317,7 +315,6 @@ function App() {
         draggable: true,
         progress: undefined,
         theme: "dark",
-        transition: Bounce,
       });
 
 
@@ -623,7 +620,6 @@ function App() {
       draggable: true,
       progress: undefined,
       theme: "dark",
-      transition: Bounce,
     });
     setShowPopup(false);
   };
@@ -840,7 +836,6 @@ function App() {
           draggable
           pauseOnHover
           theme="dark"
-          transition={Bounce}
         />
 
       </div>
