@@ -7,6 +7,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import CyberMap from './CyberMap';
 
+
 import { custom, stringToHex } from 'viem';
 import { useWalletClient } from "wagmi";
 import { StoryClient, PIL_TYPE } from "@story-protocol/core-sdk";
@@ -48,26 +49,26 @@ const bootSequence = [
   'INITIALIZING CYBER MAINFRAME...',
   'ACCESSING CORE MEMORY...',
   '                                                                                                                                                                  ',
-  '                                                                                             +**+                                                                 ',
-  '                                                                                             -++=                                                                 ',
-  '                                                                                                            -++=++++=:                                            ',
-  '                                                                                                            +++++++-=+++:                    -==-:                ',
-  '         +*=           **:   =*+  ***++****+       :****++****+           =***+*+***=  +*-   :**              :--  -=++++++            =+++++++++++++=            ',
-  '         +*=           **:   =*++*:       +**     **+.       -**=       -*++        =*=**-   :+*                  -+:  =+++++++===+++++++++++++++++++++=          ',
-  '         ++=           +*:   =**=          *++   *+-          .**      =**-           *++-   :**                    .+=   +++++++++++++=.           +++++         ',
-  '         +*=           **:   =+*           +*+                -+*      +*-             **-   :*+                       =+:     :::      -++=-:   -== =++++        ',
-  '         +*=           *+:   =*+           =*+      :=+*****+***+      **:             **-   :*+                          :+++=----+++:             ++++:=.       ',
-  '         ++=           **:   =*+           =*+    **+*-        **      *+:             +*-   :**                                                    +++= +        ',
-  '         +*=           +*-   =*+           +*+   *+:          :+*      +*+            +*+-   :+*                                                :=++++= --        ',
-  '         =*+          **+:   =*+           =*+  :**          :**+       **+          =**+-   :*+                                     .-++++++++++++=  :=.         ',
-  '          ***-      +*+**:   =*+           =*+   +**-      -**-**-       +***=    -**+ **-   :**                                  -+++=            =++            ',
-  '           -+****+**-  +*:   =*+           +*+    :+**+****+:  =****+      :+*****+:   +*-   :+*                                +-::+=---:--::-::                 ',
-  '                                                                                      -**                                    .+=                                  ',
-  '                                                                      **             .**-                                   :                                     ',
-  '                                                                      =**+-        :***:                                                                          ',
-  '                                                                        .+*****+***++:                                                                            ',
-  '                                                                                                                                                                  ',
-
+  '                                                                                                  0000                                                                     ',
+  '                                                                                                  0000                                                                     ',
+  '                                                                                                                   60088884                                                ',
+  '                                                                                                                 0000 08888888                                             ',
+  '         300            000    000  9000000000         00000000000             0000000000   001    009             688809 8888888              788888888888887             ',
+  '         300            000    0000004     00003     00008     70000         00008     4000 001    009                 480   888888881    9888888888888888888888           ',
+  '         300            000    0000          000    000           000       000           00001    009                    00   8888888888888888888        7888888          ',
+  '         300            000    000            003    9            000      000             0001    009                      888    0888888881    7888888888  88888         ',
+  '         300            000    000            003          4000000000      006              001    009                         88887        98889          88988888        ',
+  '         300            000    000            003    300000000091 000     7007              001    009                              5888882                 88888 8        ',
+  '         300            000    000            003   0003          000      000             9001    009                                                     88889 82        ',
+  '          009           000    000            003  000            000      0005            0001    009                                           9888888888888  96         ',
+  '          000         60000    000            003  000          00000       0000         000001    009                                     688888888888863    89           ',
+  '           00000   0000 000    000            003   0000001100000 0000000     000000000000  001    009                                  8889   18888888888888              ',
+  '             00000008   366    969            661     100000005    00000         100003    1007    662                                886005                               ',
+  '                                                                                           000                                      88                                     ',
+  '                                                                         0000             000                                     6                                        ',
+  '                                                                           00000       00000                                                                               ',
+  '                                                                             3000000000003                                                                                 ',
+  '                                                                                  000                                                                                      ',
 
   'BIOS VERSION 0xDEADBEEF',
   'MEMORY TEST: 64K OK',
@@ -124,6 +125,9 @@ const bootSequence = [
 //   'AUTHENTICATING... BIOMETRICS CONFIRMED'
 // ];
 
+
+
+
 function App() {
 
   // console.log("PINATA KEY ", process.env.REACT_APP_PINATA_JWT)
@@ -163,8 +167,11 @@ function App() {
   }
 
 
-
-
+  const computeHash = (content) => {
+    // const hash = createHash('sha256').update(JSON.stringify(content)).digest('hex');
+    // return '0x' + hash;
+    return
+  };
   async function registerIpWithRoyalties(cam_description, cam_image_url) {
     try {
       const client = await setupStoryClient();
@@ -213,24 +220,32 @@ function App() {
       }
 
       const Ipfs_NFT = await pinata.upload.json(nftMetadata)
-      const HASH_nft = Ipfs_NFT.IpfsHash
-      console.log("NFT metadata overall", Ipfs_NFT)
-      console.log("NFT METADATA HASH", HASH_nft)
+      // const HASH_nft = '0x' + Ipfs_NFT.IpfsHash
+
 
 
       const Ipfs_IP = await pinata.upload.json(IpMetadata)
-      const HASH_IP = Ipfs_IP.IpfsHash
-      console.log("IP METADATA HASH", HASH_IP)
+      // const HASH_IP = '0x' + Ipfs_IP.IpfsHash
+      console.log("IP METADATA HASH", Ipfs_NFT)
       console.log("IP METADATA OVERALL", Ipfs_IP)
 
 
-      const final_ipMetaData_temp =
-      {
-        ipMetadataURI: 'test-uri',
-        ipMetadataHash: HASH_IP,
-        nftMetadataHash: HASH_nft,
-        nftMetadataURI: 'test-nft-uri',
-      }
+      const HASH_nft = computeHash(nftMetadata);
+      const HASH_IP = computeHash(IpMetadata);
+      // const final_ipMetaData_temp =
+      // {
+      //   ipMetadataURI: 'test-uri',
+      //   ipMetadataHash: HASH_IP,
+      //   nftMetadataHash: HASH_nft,
+      //   nftMetadataURI: 'test-nft-uri',
+      // }
+      const final_ipMetaData_temp = {
+        ipMetadataURI: `https://ipfs.io/ipfs/${Ipfs_IP.IpfsHash}`,  // Use actual IPFS URL
+        ipMetadataHash: "0xc404730cdcdf7e5e54e8f16bc6687f97c6578a296f4a21b452d8a6ecabd61bcc",
+        nftMetadataHash: "0xc404730cdcdf7e5e54e8f16bc6687f97c6578a296f4a21b452d8a6ecabd61bcc",
+        nftMetadataURI: `https://ipfs.io/ipfs/${Ipfs_NFT.IpfsHash}`,  // Use actual IPFS URL
+      };
+
 
       console.log("IP METADATA FINAL", final_ipMetaData_temp)
 
@@ -273,7 +288,7 @@ function App() {
         "txHash": response.txHash,
         "tokenId": response.tokenId,
         "ipId": response.ipId,
-        "CID": HASH_nft
+        "CID": Ipfs_NFT.IpfsHash
       }
 
     } catch (error) {
