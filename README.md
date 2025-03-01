@@ -56,6 +56,14 @@ Unagi means "a state of total awareness" ([reference](https://www.youtube.com/wa
    
 Due to processing constraints, a script snapshots the camera livestreams, and uploads every 30th frame as the image.
 
+For each snapshot, we do image analysis using BLIP and YOLO to run inference of the footage and create bounding boxes of significant objects at that frame.
+
+Below is a livestream from a home security camera that caught a hit and run incident. 
+
+
+https://github.com/user-attachments/assets/cfa11ef9-4e36-4131-bcec-84951c736c2e
+
+
 # Future Work
 
 ### 1. Privacy Issues
